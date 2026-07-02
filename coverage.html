@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1, width=device-width">
+  <title>Rate Center Coverage Map</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: #111;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* ── MAP ─────────────────────────────────────────────────── */
+    #map {
+      height: 100vh;
+      width: 100%;
+      position: absolute;
+      inset: 0;
+    }
+
+    /* ── TOP SEARCH BAR ──────────────────────────────────────── */
+    #search-wrapper {
+      position: absolute;
+      top: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+      width: 320px;
+    }
+
+    #search-wrapper .search-inner {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #fff;
+      border-radius: 10px;
+      padding: 0 14px;
+      height: 44px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.35);
+    }
+
+    #search-wrapper .search-inner svg {
+      flex-shrink: 0;
+      color: #888;
+    }
+
+    #search-box {
+      border: none;
+      outline: none;
+      width: 100%;
+      font-family: inherit;
+      font-size: 14px;
+      color: #333;
+      background: transparent;
+    }
+
+    #search-box::placeholder { color: #aaa; }
+
+    /* ── ZOOM CONTROLS ──────────────────────────────────────── */
+    #zoom-controls {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+      overflow: hidden;
+    }
+
+    #zoom-controls button {
+      width: 34px;
+      height: 34px;
+      border: none;
+      background: #fff;
+      font-size: 20px;
+      line-height: 1;
+      cursor: pointer;
+      color: #555;
+      transition: background 0.15s;
+      font-family: inherit;
+    }
+
+    #zoom-controls button:hover { background: #f0f0f0; }
+    #zoom-controls .divider {
+      height: 1px;
+      background: #e8e8e8;
+    }
+
+    /* ── BOTTOM BAR ─────────────────────────────────────────── */
+    #bottom-bar {
+      position: absolute;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    /* Tab group */
+    .tab-group {
+      display: flex;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+      overflow: hidden;
+    }
+
+    .tab-group button {
+      border: none;
+      background: transparent;
+      padding: 9px 18px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 500;
+      color: #444;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .tab-group button.active {
+      background: #1a1a2e;
+      color: #fff;
+    }
+
+    .tab-group button:hover:not(.active) { background: #f5f5f5; }
+
+    .tab-group .tab-divider {
+      width: 1px;
+      background: #e8e8e8;
+      align-self: stretch;
+    }
+
+    /* Legend */
+    .legend-card {
+      background: #fff;
+      border-radius: 8px;
+      padding: 9px 16px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 12.5px;
+      color: #333;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .legend-dot {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .dot-5g    { background: #1a7a1a; }
+    .dot-4g    { background: #28c928; }
+    .dot-partner { background: #7cec7c; }
+
+    /* ── TOGGLE BUTTON (top right) ───────────────────────────── */
+    #toggle-partner {
+      position: absolute;
+      top: 18px;
+      right: 16px;
+      z-index: 10;
+      background: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 16px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 500;
+      color: #333;
+      cursor: pointer;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: background 0.15s;
+    }
+
+    #toggle-partner:hover { background: #f0f0f0; }
+
+    #toggle-partner .dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: #28c928;
+    }
+
+    /* Loading overlay */
+    #loading-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(10,10,20,0.75);
+      z-index: 20;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      transition: opacity 0.5s;
+    }
+
+    #loading-overlay.hidden { opacity: 0; pointer-events: none; }
+
+    .spinner {
+      width: 36px;
+      height: 36px;
+      border: 3px solid rgba(255,255,255,0.2);
+      border-top-color: #28c928;
+      border-radius: 50%;
+      animation: spin 0.9s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Progress bar */
+    #progress-bar-wrap {
+      width: 200px;
+      height: 4px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    #progress-bar {
+      height: 100%;
+      background: #28c928;
+      width: 0%;
+      transition: width 0.2s;
+      border-radius: 2px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Loading overlay -->
+  <div id="loading-overlay">
+    <div class="spinner"></div>
+    <span id="loading-text">Loading coverage data…</span>
+    <div id="progress-bar-wrap">
+      <div id="progress-bar"></div>
+    </div>
+  </div>
+
+  <!-- Map -->
+  <div id="map"></div>
+
+  <!-- Search bar -->
+  <div id="search-wrapper">
+    <div class="search-inner">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <input id="search-box" type="text" placeholder="Verify an address…">
+    </div>
+  </div>
+
+  <!-- Zoom controls -->
+  <div id="zoom-controls">
+    <button id="zoom-in" title="Zoom in">+</button>
+    <div class="divider"></div>
+    <button id="zoom-out" title="Zoom out">−</button>
+  </div>
+
+  <!-- Toggle coverage -->
+  <button id="toggle-partner">
+    <span class="dot"></span>
+    Toggle Coverage
+  </button>
+
+  <!-- Bottom bar: tabs + legend -->
+  <div id="bottom-bar">
+    <div class="tab-group">
+      <button class="active" id="btn-coverage">Coverage Details</button>
+      <div class="tab-divider"></div>
+      <button id="btn-subscription">Subscription Area</button>
+    </div>
+
+    <div class="legend-card">
+      <div class="legend-item">
+        <div class="legend-dot dot-5g"></div>
+        5G Network
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot dot-4g"></div>
+        4G (LTE) Network
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot dot-partner"></div>
+        Partner Network
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let map;
+    let RateCenterHeatmap;
+
+    const rateCenterAddresses = [
+      'AIRDRIE, AB, Canada','ANZAC, AB, Canada','BANFF, AB, Canada','BLACKFALDS, AB, Canada',
+      'BONNYVILLE, AB, Canada','BOYLE, AB, Canada','BROOKS, AB, Canada','CALGARY, AB, Canada',
+      'CAMROSE, AB, Canada','CANMORE, AB, Canada','CLARESHOLM, AB, Canada','COALDALE, AB, Canada',
+      'DRAYTON VALLEY, AB, Canada','DRUMHELLER, AB, Canada','EDMONTON, AB, Canada','EDSON, AB, Canada',
+      'FORT MCMURRAY, AB, Canada','FOX CREEK, AB, Canada','GRANDE CACHE, AB, Canada','GRANDE PRAIRIE, AB, Canada',
+      'HANNA, AB, Canada','HARDISTY, AB, Canada','HAY LAKES, AB, Canada','HIGH LEVEL, AB, Canada',
+      'HIGH RIVER, AB, Canada','HINTON, AB, Canada','JASPER, AB, Canada','LAC LA BICHE, AB, Canada',
+      'LANGDON, AB, Canada','LEDUC, AB, Canada','LETHBRIDGE, AB, Canada','LLOYDMINSTER, AB, Canada',
+      'MEDICINE HAT, AB, Canada','OLDS, AB, Canada','OYEN, AB, Canada','PEACE RIVER, AB, Canada',
+      'PINCHER CREEK, AB, Canada','PONOKA, AB, Canada','RED DEER, AB, Canada','ROCKY MOUNTAIN HOUSE, AB, Canada',
+      'SEXSMITH, AB, Canada','SHERWOOD PARK, AB, Canada','SLAVE LAKE, AB, Canada','SPIRIT RIVER, AB, Canada',
+      'SPRUCE GROVE, AB, Canada','ST. ALBERT, AB, Canada','ST. PAUL, AB, Canada','STETTLER, AB, Canada',
+      'STONY PLAIN, AB, Canada','STRATHMORE, AB, Canada','VALLEYVIEW, AB, Canada','VAUXHALL, AB, Canada',
+      'VEGREVILLE, AB, Canada','VERMILION, AB, Canada','VETERAN, AB, Canada','VULCAN, AB, Canada',
+      'WAINWRIGHT, AB, Canada','Westlock, AB, Canada','WETASKIWIN, AB, Canada',
+      'ABBOTSFORD, BC, Canada','ALDERGROVE, BC, Canada','BURNS LAKE, BC, Canada','CACHE CREEK, BC, Canada',
+      'CAMPBELL RIVER, BC, Canada','Castlegar, BC, Canada','CHILLIWACK, BC, Canada','CRANBROOK, BC, Canada',
+      'DAWSON CREEK, BC, Canada','DUNCAN, BC, Canada','FERNIE, BC, Canada','FORT ST. JOHN, BC, Canada',
+      'GIBSONS, BC, Canada','GRAND FORKS, BC, Canada','GULF ISLANDS, BC, Canada','HOPE, BC, Canada',
+      'KELOWNA, BC, Canada','KEREMEOS, BC, Canada','LILLOOET, BC, Canada','Masset, BC, Canada',
+      'MERRITT, BC, Canada','MIDWAY, BC, Canada','NANAIMO, BC, Canada','NELSON, BC, Canada',
+      'NEW WESTMINSTER, BC, Canada','NORTH VANCOUVER, BC, Canada','PARKSVILLE, BC, Canada','PENTICTON, BC, Canada',
+      'PINEVIEW, BC, Canada','Port Alberni, BC, Canada','Powell River, BC, Canada','PRINCE GEORGE, BC, Canada',
+      'PRINCETON, BC, Canada','QUESNEL, BC, Canada','REVELSTOKE, BC, Canada','RICHMOND, BC, Canada',
+      'SALMON ARM, BC, Canada','SOUTH KAMLOOPS, BC, Canada','SPARWOOD, BC, Canada','SQUAMISH, BC, Canada',
+      'TERRACE, BC, Canada','VANCOUVER, BC, Canada','VERNON, BC, Canada','VICTORIA, BC, Canada',
+      'WEST VANCOUVER, BC, Canada','WHISTLER, BC, Canada','WILLIAMS LAKE, BC, Canada',
+      'ANOLA, MB, Canada','AUSTIN, MB, Canada','OAKBANK, MB, Canada','PORTAGE LA PRAIRIE, MB, Canada',
+      'STARBUCK, MB, Canada','STONEWALL, MB, Canada','WINNIPEG, MB, Canada',
+      'BATHURST, NB, Canada','BOUCTOUCHE, NB, Canada','CAMPBELLTON, NB, Canada','CARAQUET, NB, Canada',
+      'DALHOUSIE, NB, Canada','DOAKTOWN, NB, Canada','EDMUNDSTON, NB, Canada','FLORENCEVILLE, NB, Canada',
+      'FREDERICTON, NB, Canada','GRAND FALLS, NB, Canada','HARVEY STATION, NB, Canada','MIRAMICHI, NB, Canada',
+      'MONCTON, NB, Canada','PERTH-ANDOVER, NB, Canada','PETITCODIAC, NB, Canada','RICHIBUCTO, NB, Canada',
+      'SACKVILLE, NB, Canada','SAINT JOHN, NB, Canada','SHEDIAC, NB, Canada','SHIPPAGAN, NB, Canada',
+      'ST. GEORGE, NB, Canada','ST. STEPHEN, NB, Canada','SUSSEX, NB, Canada','TRACADIE, NB, Canada',
+      'WOODSTOCK, NB, Canada',
+      'BAY ROBERTS, NL, Canada','BONAVISTA, NL, Canada','CARBONEAR, NL, Canada','CLARENVILLE, NL, Canada',
+      'CORNER BROOK, NL, Canada','MARYSTOWN, NL, Canada',"ST. ALBAN'S, NL, Canada","ST. JOHN'S, NL, Canada",
+      'TORBAY, NL, Canada','UPPER ISLAND COVE, NL, Canada','GANDER, NL, Canada',
+      'BEHCHOKO, NT, Canada','INUVIK, NT, Canada','TUKTOYAKTUK, NT, Canada','YELLOWKNIFE, NT, Canada',
+      'AMHERST, NS, Canada','ANNAPOLIS ROYAL, NS, Canada','ANTIGONISH, NS, Canada','BARRINGTON, NS, Canada',
+      'BRIDGEWATER, NS, Canada','CALEDONIA, NS, Canada','CANSO, NS, Canada','CHESTER, NS, Canada',
+      'CHETICAMP, NS, Canada','DIGBY, NS, Canada','HALIFAX, NS, Canada','INVERNESS, NS, Canada',
+      'KENTVILLE, NS, Canada','LIVERPOOL, NS, Canada','MIDDLETON, NS, Canada','MUSQUODOBOIT HARBOUR, NS, Canada',
+      'NEW GLASGOW, NS, Canada','PORT HAWKESBURY, NS, Canada','SHELBURNE, NS, Canada','SHUBENACADIE, NS, Canada',
+      'SYDNEY, NS, Canada','TRURO, NS, Canada','WEYMOUTH, NS, Canada','WINDSOR, NS, Canada','YARMOUTH, NS, Canada',
+      'IQALUIT, Nunavut, Canada',
+      'AJAX-PICKERING, ON, Canada','ALGOMA MILLS, ON, Canada','ALLISTON, ON, Canada','ANCASTER, ON, Canada',
+      'ATIKOKAN, ON, Canada','AURORA, ON, Canada','AYLMER, ON, Canada','BANCROFT, ON, Canada',
+      'BARRIE, ON, Canada','BELLEVILLE, ON, Canada','BELMONT, ON, Canada','BOBCAYGEON, ON, Canada',
+      'BOLTON, ON, Canada','BORDEN-ANGUS, ON, Canada','BOWMANVILLE, ON, Canada','BRACEBRIDGE, ON, Canada',
+      'BRAMPTON, ON, Canada','BRANTFORD, ON, Canada','BROCKVILLE, ON, Canada','BURLINGTON, ON, Canada',
+      'CAMPBELLFORD, ON, Canada','CARLETON PLACE, ON, Canada','CHATHAM, ON, Canada','CLAREMONT, ON, Canada',
+      'CLINTON, ON, Canada','COBOURG, ON, Canada','COLLINGWOOD, ON, Canada','COOKSVILLE, ON, Canada',
+      'CORNWALL, ON, Canada','DEVLIN, ON, Canada','DUNNVILLE, ON, Canada','DURHAM, ON, Canada',
+      'ESPANOLA, ON, Canada','ESSEX, ON, Canada','FOLEYET, ON, Canada','FORT ERIE, ON, Canada',
+      'FORT FRANCES, ON, Canada','GALT, ON, Canada','GERALDTON, ON, Canada','GODERICH, ON, Canada',
+      'GORE BAY, ON, Canada','GRAVENHURST, ON, Canada','GRIMSBY, ON, Canada','GUELPH, ON, Canada',
+      'HALIBURTON, ON, Canada','HAMILTON, ON, Canada','HAWKESBURY, ON, Canada','HESPELER, ON, Canada',
+      'HUDSON, ON, Canada','HUNTSVILLE, ON, Canada','JOCKVALE, ON, Canada','KANATA-STITTSVILLE, ON, Canada',
+      'KING CITY, ON, Canada','KINGSTON, ON, Canada','KITCHENER-WATERLOO, ON, Canada','KLEINBURG, ON, Canada',
+      'LEAMINGTON, ON, Canada','LINDSAY, ON, Canada','LISTOWEL, ON, Canada','LONDON, ON, Canada',
+      'MALTON, ON, Canada','MAPLE, ON, Canada','MARATHON, ON, Canada','MARKHAM, ON, Canada',
+      'MARKSTAY, ON, Canada','MERRICKVILLE, ON, Canada','MIDLAND, ON, Canada','MILTON, ON, Canada',
+      'NEWMARKET, ON, Canada','NIAGARA FALLS, ON, Canada','NIAGARA-ON-THE-LAKE, ON, Canada','NORTH BAY, ON, Canada',
+      'OAK RIDGES, ON, Canada','OAKVILLE, ON, Canada','ORANGEVILLE, ON, Canada','ORILLIA, ON, Canada',
+      'OSHAWA, ON, Canada','OTTAWA-HULL, ON, Canada','OWEN SOUND, ON, Canada','PARRY SOUND, ON, Canada',
+      'PERTH, ON, Canada','PETERBOROUGH, ON, Canada','RICHMOND HILL, ON, Canada','SARNIA, ON, Canada',
+      'SAULT SAINTE MARIE, ON, Canada','SMITHS FALLS, ON, Canada','SOUTH PICKERING, ON, Canada',
+      'ST. CATHARINES-THOROLD, ON, Canada','ST. THOMAS, ON, Canada','STONEY CREEK, ON, Canada',
+      'STOUFFVILLE, ON, Canada','STRATFORD, ON, Canada','STREETSVILLE, ON, Canada','SUDBURY, ON, Canada',
+      'THORNHILL, ON, Canada','THUNDER BAY, ON, Canada','TILLSONBURG, ON, Canada','TORONTO, ON, Canada',
+      'UNIONVILLE, ON, Canada','VANKLEEK HILL, ON, Canada','WALKERTON, ON, Canada','WELLAND, ON, Canada',
+      'WHITBY, ON, Canada','WINDSOR, ON, Canada','WINGHAM, ON, Canada','WOODBRIDGE, ON, Canada','WOODSTOCK, ON, Canada',
+      'ALBERTON, PEI, Canada','CHARLOTTETOWN, PEI, Canada','MONTAGUE, PEI, Canada','SUMMERSIDE, PEI, Canada',
+      'AKULIVIK, QC, Canada','ALMA, QC, Canada','AMOS, QC, Canada','AMQUI, QC, Canada',
+      'AUPALUK, QC, Canada','BAIE-COMEAU, QC, Canada','BAIE-COMEAU (HAUTERIVE), QC, Canada',
+      'BAIE-TRINITE, QC, Canada','BELOEIL, QC, Canada','BONAVENTURE, QC, Canada','BOUCHERVILLE, QC, Canada',
+      'BUCKINGHAM, QC, Canada','CARLETON, QC, Canada','CHAMBLY, QC, Canada','CHANDLER, QC, Canada',
+      'CHATEAUGUAY, QC, Canada','CHIBOUGAMAU, QC, Canada','CHICOUTIMI, QC, Canada','CHOMEDEY, QC, Canada',
+      'DEAUVILLE, QC, Canada','DONNACONA, QC, Canada','DRUMMONDVILLE, QC, Canada','FORESTVILLE, QC, Canada',
+      'GASPE, QC, Canada','GATINEAU, QC, Canada','GRANBY, QC, Canada','GRANDE-VALLEE, QC, Canada',
+      'GRENVILLE, QC, Canada','HAVRE-SAINT-PIERRE, QC, Canada','ILE-PERROT, QC, Canada','INUKJUAK, QC, Canada',
+      'IVUJIVIK, QC, Canada','JOLIETTE, QC, Canada','KANGIQSUALUJJUAQ, QC, Canada','KANGIQSUJUAQ, QC, Canada',
+      'KANGIRSUK, QC, Canada','KUUJJUAQ, QC, Canada','KUUJJUARAAPIK, QC, Canada','LA MALBAIE, QC, Canada',
+      'LACHINE, QC, Canada','LACHUTE, QC, Canada','LAC-MEGANTIC, QC, Canada','LANORAIE, QC, Canada',
+      'LAPRAIRIE, QC, Canada','LAVAL-EST, QC, Canada','LAVAL-OUEST, QC, Canada',
+      "L'EPIPHANIE-L'ASSOMPTION, QC, Canada",'LEVIS, QC, Canada','LONGUEUIL, QC, Canada',
+      'MAGOG, QC, Canada','MANIWAKI, QC, Canada','MARIA, QC, Canada','MARIEVILLE, QC, Canada',
+      'MATANE, QC, Canada','MATAPEDIA, QC, Canada','MONT-JOLI, QC, Canada','MONT-LOUIS, QC, Canada',
+      'MONTMAGNY, QC, Canada','MONTREAL, QC, Canada','NATASHQUAN, QC, Canada','NEW RICHMOND, QC, Canada',
+      'OTTAWA-HULL, QC, Canada','PERCE, QC, Canada','PLESSISVILLE, QC, Canada','POINTE-CLAIRE, QC, Canada',
+      'PONT-VIAU, QC, Canada','PORT-CARTIER, QC, Canada','PORT-DANIEL, QC, Canada','PUVIRNITUK, QC, Canada',
+      'QUAQTAQ, QC, Canada','QUEBEC, QC, Canada','RIMOUSKI, QC, Canada','RIVIERE-DU-LOUP, QC, Canada',
+      'ROUYN-NORANDA, QC, Canada','ROXBORO, QC, Canada','SAINTE-ANNE-DES-MONS, QC, Canada',
+      'SAINTE-MARIE-DE-BEAUCE, QC, Canada','SAINT-FABIEN, QC, Canada','SAINT-HENRI-DE-LEVIS, QC, Canada',
+      'SALLUIT, QC, Canada','SEPT-ILES, QC, Canada','SHAWINIGAN, QC, Canada','SHERBROOKE, QC, Canada',
+      'SOREL, QC, Canada','ST-BRUNO, QC, Canada','STE-AGATHE, QC, Canada','STE-GENEVIEVE, QC, Canada',
+      'STE-JULIE-DE-VERCHERES, QC, Canada','STE-ROSE, QC, Canada','STE-THERESE, QC, Canada',
+      'ST-EUSTACHE, QC, Canada','ST-FELICIEN, QC, Canada','ST-HYACINTHE, QC, Canada','ST-JEAN, QC, Canada',
+      'ST-JEROME, QC, Canada','ST-LAMBERT, QC, Canada','ST-LIN, QC, Canada','ST-MARC, QC, Canada',
+      'ST-SAUVEUR, QC, Canada','ST-TITE-DES-CAPS, QC, Canada','ST-VINCENT-DE-PAUL, QC, Canada',
+      'TASIUJAQ, QC, Canada','TERREBONNE, QC, Canada','THETFORD MINES, QC, Canada','TROIS-RIVIERES, QC, Canada',
+      'UMIUJAQ, QC, Canada',"VAL-D'OR, QC, Canada",'VALLEYFIELD, QC, Canada','VARENNES, QC, Canada',
+      'VERCHERES, QC, Canada','VICTORIAVILLE, QC, Canada','VILLE-MARIE, QC, Canada',
+      'BIGGAR, SK, Canada','DAVIDSON, SK, Canada',"FORT QU'APPELLE, SK, Canada",'KIPLING, SK, Canada',
+      'LANGHAM, SK, Canada','LANIGAN, SK, Canada','LUMSDEN, SK, Canada','MOOSOMIN, SK, Canada',
+      'OUTLOOK, SK, Canada','REGINA, SK, Canada','ROSTHERN, SK, Canada','ROULEAU, SK, Canada',
+      'SASKATOON, SK, Canada','WATROUS, SK, Canada',
+      'DAWSON CITY, Yukon, Canada','WHITEHORSE, Yukon, Canada'
+    ];
+
+    const gradient = [
+      'rgba(0,255,100,0)',
+      'rgba(0,220,80,0.6)',
+      'rgba(0,200,60,0.8)',
+      'rgba(0,180,50,0.9)',
+      'rgba(0,160,40,1)',
+      'rgba(0,140,30,1)',
+      'rgba(0,120,20,1)',
+      'rgba(0,100,10,1)',
+      'rgba(0,80,5,1)',
+      'rgba(0,60,0,1)'
+    ];
+
+    function geocodeAddresses(addresses, callback) {
+      const geocoder = new google.maps.Geocoder();
+      const locations = [];
+      let completed = 0;
+      const total = addresses.length;
+
+      addresses.forEach((addr, idx) => {
+        setTimeout(() => {
+          geocoder.geocode({ address: addr }, (results, status) => {
+            if (status === 'OK' && results && results[0]) {
+              locations.push(results[0].geometry.location);
+            } else {
+              console.warn('Geocode failed for ' + addr + ': ' + status);
+            }
+            completed++;
+            // Update progress bar
+            const pct = Math.round((completed / total) * 100);
+            document.getElementById('progress-bar').style.width = pct + '%';
+            document.getElementById('loading-text').textContent =
+              `Loading coverage… ${completed} / ${total}`;
+
+            if (completed === total) {
+              setTimeout(() => {
+                const overlay = document.getElementById('loading-overlay');
+                overlay.classList.add('hidden');
+                setTimeout(() => overlay.remove(), 600);
+              }, 400);
+              callback(locations);
+            }
+          });
+        }, idx * 100);
+      });
+    }
+
+    function initMap() {
+      map = new google.maps.Map(document.getElementById('map'), {
+        zoom: 4,
+        center: { lat: 56.1304, lng: -96.3468 },
+        mapTypeId: 'roadmap',
+        disableDefaultUI: true,
+        styles: [
+          { elementType: 'geometry', stylers: [{ color: '#1a1f2e' }] },
+          { elementType: 'labels.text.fill', stylers: [{ color: '#8fa3bf' }] },
+          { elementType: 'labels.text.stroke', stylers: [{ color: '#1a1f2e' }] },
+          { featureType: 'administrative', elementType: 'geometry.stroke', stylers: [{ color: '#334155' }] },
+          { featureType: 'administrative.country', elementType: 'geometry.stroke', stylers: [{ color: '#4a5568' }] },
+          { featureType: 'administrative.province', elementType: 'geometry.stroke', stylers: [{ color: '#2d3748' }] },
+          { featureType: 'landscape', elementType: 'geometry', stylers: [{ color: '#1a2035' }] },
+          { featureType: 'landscape.natural.landcover', elementType: 'geometry', stylers: [{ color: '#1e2840' }] },
+          { featureType: 'poi', stylers: [{ visibility: 'off' }] },
+          { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#263150' }] },
+          { featureType: 'road', elementType: 'geometry.stroke', stylers: [{ color: '#1a2035' }] },
+          { featureType: 'road.highway', elementType: 'geometry', stylers: [{ color: '#2e3e60' }] },
+          { featureType: 'transit', stylers: [{ visibility: 'off' }] },
+          { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#0d1b2a' }] },
+          { featureType: 'water', elementType: 'labels.text.fill', stylers: [{ color: '#3a5f7d' }] }
+        ]
+      });
+
+      // Search box
+      const searchBox = new google.maps.places.SearchBox(document.getElementById('search-box'));
+      map.addListener('bounds_changed', () => searchBox.setBounds(map.getBounds()));
+
+      let searchMarkers = [];
+      searchBox.addListener('places_changed', () => {
+        const places = searchBox.getPlaces();
+        if (!places || places.length === 0) return;
+        searchMarkers.forEach(m => m.setMap(null));
+        searchMarkers = [];
+        const bounds = new google.maps.LatLngBounds();
+        places.forEach(place => {
+          if (!place.geometry || !place.geometry.location) return;
+          searchMarkers.push(new google.maps.Marker({
+            map,
+            title: place.name,
+            position: place.geometry.location,
+            icon: {
+              path: google.maps.SymbolPath.CIRCLE,
+              scale: 8,
+              fillColor: '#28c928',
+              fillOpacity: 1,
+              strokeColor: '#fff',
+              strokeWeight: 2
+            }
+          }));
+          if (place.geometry.viewport) bounds.union(place.geometry.viewport);
+          else bounds.extend(place.geometry.location);
+        });
+        map.fitBounds(bounds);
+      });
+
+      // Custom zoom buttons
+      document.getElementById('zoom-in').addEventListener('click', () => map.setZoom(map.getZoom() + 1));
+      document.getElementById('zoom-out').addEventListener('click', () => map.setZoom(map.getZoom() - 1));
+
+      // Geocode & build heatmap
+      geocodeAddresses(rateCenterAddresses, (locations) => {
+        RateCenterHeatmap = new google.maps.visualization.HeatmapLayer({
+          data: locations,
+          map: map,
+          gradient: gradient,
+          radius: getRadiusForZoom(map.getZoom()),
+          opacity: 0.85,
+          maxIntensity: 3,
+          dissipating: true
+        });
+      });
+
+      map.addListener('zoom_changed', () => {
+        if (RateCenterHeatmap) RateCenterHeatmap.set('radius', getRadiusForZoom(map.getZoom()));
+      });
+
+      // Toggle coverage button
+      document.getElementById('toggle-partner').addEventListener('click', () => {
+        if (RateCenterHeatmap) {
+          const isVisible = !!RateCenterHeatmap.getMap();
+          RateCenterHeatmap.setMap(isVisible ? null : map);
+          document.querySelector('#toggle-partner .dot').style.background = isVisible ? '#aaa' : '#28c928';
+        }
+      });
+
+      // Tab switching
+      document.getElementById('btn-coverage').addEventListener('click', function() {
+        this.classList.add('active');
+        document.getElementById('btn-subscription').classList.remove('active');
+      });
+      document.getElementById('btn-subscription').addEventListener('click', function() {
+        this.classList.add('active');
+        document.getElementById('btn-coverage').classList.remove('active');
+      });
+    }
+
+    function getRadiusForZoom(zoom) {
+      // Scale exponentially so coverage maintains geographic width when zooming
+      const radius = 15 * Math.pow(2, zoom - 4);
+      return Math.min(Math.max(Math.round(radius), 10), 500);
+    } 
+     //key: AIzaSyCPilDrU4uiB2aRpwDPAAqtVj9KXB3xpqc
+
+  </script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCPilDrU4uiB2aRpwDPAAqtVj9KXB3xpqc&callback=initMap&libraries=places,visualization&v=weekly" async defer></script>
+</body>
+</html>
