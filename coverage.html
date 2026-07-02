@@ -17,261 +17,112 @@
       overflow: hidden;
     }
 
-    /* ── MAP ─────────────────────────────────────────────────── */
-    #map {
-      height: 100vh;
-      width: 100%;
-      position: absolute;
-      inset: 0;
-    }
+    #map { height: 100vh; width: 100%; position: absolute; inset: 0; }
 
-    /* ── TOP SEARCH BAR ──────────────────────────────────────── */
     #search-wrapper {
-      position: absolute;
-      top: 18px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 10;
-      width: 320px;
+      position: absolute; top: 18px; left: 50%; transform: translateX(-50%);
+      z-index: 10; width: 320px;
     }
-
     #search-wrapper .search-inner {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      background: #fff;
-      border-radius: 10px;
-      padding: 0 14px;
-      height: 44px;
+      display: flex; align-items: center; gap: 10px; background: #fff;
+      border-radius: 10px; padding: 0 14px; height: 44px;
       box-shadow: 0 4px 20px rgba(0,0,0,0.35);
     }
-
-    #search-wrapper .search-inner svg {
-      flex-shrink: 0;
-      color: #888;
-    }
-
+    #search-wrapper .search-inner svg { flex-shrink: 0; color: #888; }
     #search-box {
-      border: none;
-      outline: none;
-      width: 100%;
-      font-family: inherit;
-      font-size: 14px;
-      color: #333;
-      background: transparent;
+      border: none; outline: none; width: 100%; font-family: inherit;
+      font-size: 14px; color: #333; background: transparent;
     }
-
     #search-box::placeholder { color: #aaa; }
 
-    /* ── ZOOM CONTROLS ──────────────────────────────────────── */
     #zoom-controls {
-      position: absolute;
-      left: 16px;
-      top: 50%;
-      transform: translateY(-50%);
-      z-index: 10;
-      display: flex;
-      flex-direction: column;
-      background: #fff;
-      border-radius: 8px;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.3);
-      overflow: hidden;
+      position: absolute; left: 16px; top: 50%; transform: translateY(-50%);
+      z-index: 10; display: flex; flex-direction: column; background: #fff;
+      border-radius: 8px; box-shadow: 0 2px 12px rgba(0,0,0,0.3); overflow: hidden;
     }
-
     #zoom-controls button {
-      width: 34px;
-      height: 34px;
-      border: none;
-      background: #fff;
-      font-size: 20px;
-      line-height: 1;
-      cursor: pointer;
-      color: #555;
-      transition: background 0.15s;
+      width: 34px; height: 34px; border: none; background: #fff; font-size: 20px;
+      line-height: 1; cursor: pointer; color: #555; transition: background 0.15s;
       font-family: inherit;
     }
-
     #zoom-controls button:hover { background: #f0f0f0; }
-    #zoom-controls .divider {
-      height: 1px;
-      background: #e8e8e8;
-    }
+    #zoom-controls .divider { height: 1px; background: #e8e8e8; }
 
-    /* ── BOTTOM BAR ─────────────────────────────────────────── */
     #bottom-bar {
-      position: absolute;
-      bottom: 24px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 10;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      flex-wrap: wrap;
-      justify-content: center;
+      position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%);
+      z-index: 10; display: flex; align-items: center; gap: 12px;
+      flex-wrap: wrap; justify-content: center;
     }
-
-    /* Tab group */
     .tab-group {
-      display: flex;
-      background: #fff;
-      border-radius: 8px;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.3);
-      overflow: hidden;
+      display: flex; background: #fff; border-radius: 8px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.3); overflow: hidden;
     }
-
     .tab-group button {
-      border: none;
-      background: transparent;
-      padding: 9px 18px;
-      font-family: inherit;
-      font-size: 13px;
-      font-weight: 500;
-      color: #444;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: background 0.15s, color 0.15s;
+      border: none; background: transparent; padding: 9px 18px; font-family: inherit;
+      font-size: 13px; font-weight: 500; color: #444; cursor: pointer;
+      white-space: nowrap; transition: background 0.15s, color 0.15s;
     }
-
-    .tab-group button.active {
-      background: #1a1a2e;
-      color: #fff;
-    }
-
+    .tab-group button.active { background: #1a1a2e; color: #fff; }
     .tab-group button:hover:not(.active) { background: #f5f5f5; }
+    .tab-group .tab-divider { width: 1px; background: #e8e8e8; align-self: stretch; }
 
-    .tab-group .tab-divider {
-      width: 1px;
-      background: #e8e8e8;
-      align-self: stretch;
-    }
-
-    /* Legend */
     .legend-card {
-      background: #fff;
-      border-radius: 8px;
-      padding: 9px 16px;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.3);
-      display: flex;
-      align-items: center;
-      gap: 18px;
+      background: #fff; border-radius: 8px; padding: 9px 16px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.3); display: flex;
+      align-items: center; gap: 18px;
     }
-
     .legend-item {
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      font-size: 12.5px;
-      color: #333;
-      font-weight: 500;
-      white-space: nowrap;
+      display: flex; align-items: center; gap: 7px; font-size: 12.5px;
+      color: #333; font-weight: 500; white-space: nowrap;
     }
-
-    .legend-dot {
-      width: 11px;
-      height: 11px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-
-    .dot-5g    { background: #1a7a1a; }
-    .dot-4g    { background: #28c928; }
+    .legend-dot { width: 11px; height: 11px; border-radius: 50%; flex-shrink: 0; }
+    .dot-5g { background: #1a7a1a; }
+    .dot-4g { background: #28c928; }
     .dot-partner { background: #7cec7c; }
 
-    /* ── TOGGLE BUTTON (top right) ───────────────────────────── */
     #toggle-partner {
-      position: absolute;
-      top: 18px;
-      right: 16px;
-      z-index: 10;
-      background: #fff;
-      border: none;
-      border-radius: 8px;
-      padding: 10px 16px;
-      font-family: inherit;
-      font-size: 13px;
-      font-weight: 500;
-      color: #333;
-      cursor: pointer;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.3);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      transition: background 0.15s;
+      position: absolute; top: 18px; right: 16px; z-index: 10; background: #fff;
+      border: none; border-radius: 8px; padding: 10px 16px; font-family: inherit;
+      font-size: 13px; font-weight: 500; color: #333; cursor: pointer;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.3); display: flex; align-items: center;
+      gap: 8px; transition: background 0.15s;
     }
-
     #toggle-partner:hover { background: #f0f0f0; }
+    #toggle-partner .dot { width: 10px; height: 10px; border-radius: 50%; background: #28c928; }
 
-    #toggle-partner .dot {
-      width: 10px; height: 10px;
-      border-radius: 50%;
-      background: #28c928;
-    }
-
-    /* Loading overlay */
     #loading-overlay {
-      position: absolute;
-      inset: 0;
-      background: rgba(10,10,20,0.75);
-      z-index: 20;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 14px;
-      color: #fff;
-      font-size: 14px;
-      font-weight: 500;
-      letter-spacing: 0.02em;
-      transition: opacity 0.5s;
+      position: absolute; inset: 0; background: rgba(10,10,20,0.75); z-index: 20;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 14px; color: #fff; font-size: 14px; font-weight: 500;
+      letter-spacing: 0.02em; transition: opacity 0.5s; text-align: center; padding: 0 24px;
     }
-
     #loading-overlay.hidden { opacity: 0; pointer-events: none; }
-
     .spinner {
-      width: 36px;
-      height: 36px;
-      border: 3px solid rgba(255,255,255,0.2);
-      border-top-color: #28c928;
-      border-radius: 50%;
-      animation: spin 0.9s linear infinite;
+      width: 36px; height: 36px; border: 3px solid rgba(255,255,255,0.2);
+      border-top-color: #28c928; border-radius: 50%; animation: spin 0.9s linear infinite;
     }
-
+    #loading-overlay.error .spinner { display: none; }
     @keyframes spin { to { transform: rotate(360deg); } }
-
-    /* Progress bar */
     #progress-bar-wrap {
-      width: 200px;
-      height: 4px;
-      background: rgba(255,255,255,0.15);
-      border-radius: 2px;
-      overflow: hidden;
+      width: 200px; height: 4px; background: rgba(255,255,255,0.15);
+      border-radius: 2px; overflow: hidden;
     }
-
     #progress-bar {
-      height: 100%;
-      background: #28c928;
-      width: 0%;
-      transition: width 0.2s;
-      border-radius: 2px;
+      height: 100%; background: #28c928; width: 0%;
+      transition: width 0.2s; border-radius: 2px;
     }
   </style>
 </head>
 <body>
 
-  <!-- Loading overlay -->
   <div id="loading-overlay">
     <div class="spinner"></div>
     <span id="loading-text">Loading coverage data…</span>
-    <div id="progress-bar-wrap">
-      <div id="progress-bar"></div>
-    </div>
+    <div id="progress-bar-wrap"><div id="progress-bar"></div></div>
   </div>
 
-  <!-- Map -->
   <div id="map"></div>
 
-  <!-- Search bar -->
   <div id="search-wrapper">
     <div class="search-inner">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -281,46 +132,51 @@
     </div>
   </div>
 
-  <!-- Zoom controls -->
   <div id="zoom-controls">
     <button id="zoom-in" title="Zoom in">+</button>
     <div class="divider"></div>
     <button id="zoom-out" title="Zoom out">−</button>
   </div>
 
-  <!-- Toggle coverage -->
   <button id="toggle-partner">
     <span class="dot"></span>
     Toggle Coverage
   </button>
 
-  <!-- Bottom bar: tabs + legend -->
   <div id="bottom-bar">
     <div class="tab-group">
       <button class="active" id="btn-coverage">Coverage Details</button>
       <div class="tab-divider"></div>
       <button id="btn-subscription">Subscription Area</button>
     </div>
-
     <div class="legend-card">
-      <div class="legend-item">
-        <div class="legend-dot dot-5g"></div>
-        5G Network
-      </div>
-      <div class="legend-item">
-        <div class="legend-dot dot-4g"></div>
-        4G (LTE) Network
-      </div>
-      <div class="legend-item">
-        <div class="legend-dot dot-partner"></div>
-        Partner Network
-      </div>
+      <div class="legend-item"><div class="legend-dot dot-5g"></div>5G Network</div>
+      <div class="legend-item"><div class="legend-dot dot-4g"></div>4G (LTE) Network</div>
+      <div class="legend-item"><div class="legend-dot dot-partner"></div>Partner Network</div>
     </div>
   </div>
 
+  <!-- deck.gl: replaces the removed google.maps.visualization.HeatmapLayer -->
+  <script src="https://unpkg.com/deck.gl@9.0.4/dist.min.js"></script>
+
   <script>
     let map;
-    let RateCenterHeatmap;
+    let deckOverlay;
+    let heatVisible = true;
+    let heatData = [];   // array of [lng, lat]
+
+    // ────────────────────────────────────────────────────────────
+    // OPTION A (zero API calls, best): paste precomputed coords here.
+    // After the first full geocode run, open the console and run:
+    //   copy(localStorage.getItem('rc_geocache_v1'))
+    // then paste the JSON into HARDCODED_COORDS below. Once populated,
+    // the Geocoder is never called again by anyone.
+    // To wipe a bad cache during testing, run in console:
+    //   localStorage.removeItem('rc_geocache_v1'); location.reload();
+    // ────────────────────────────────────────────────────────────
+    const HARDCODED_COORDS = null; // e.g. {"CALGARY, AB, Canada":{"lat":51.04,"lng":-114.07}, ...}
+
+    const CACHE_KEY = 'rc_geocache_v1'; // bump to v2 if the address list changes
 
     const rateCenterAddresses = [
       'AIRDRIE, AB, Canada','ANZAC, AB, Canada','BANFF, AB, Canada','BLACKFALDS, AB, Canada',
@@ -435,51 +291,128 @@
       'DAWSON CITY, Yukon, Canada','WHITEHORSE, Yukon, Canada'
     ];
 
-    const gradient = [
-      'rgba(0,255,100,0)',
-      'rgba(0,220,80,0.6)',
-      'rgba(0,200,60,0.8)',
-      'rgba(0,180,50,0.9)',
-      'rgba(0,160,40,1)',
-      'rgba(0,140,30,1)',
-      'rgba(0,120,20,1)',
-      'rgba(0,100,10,1)',
-      'rgba(0,80,5,1)',
-      'rgba(0,60,0,1)'
+    // Low → high green ramp for deck.gl HeatmapLayer (RGB or RGBA)
+    const colorRange = [
+      [0, 220, 80],
+      [0, 200, 60],
+      [0, 170, 45],
+      [0, 140, 30],
+      [0, 100, 15],
+      [0, 60, 0]
     ];
 
-    function geocodeAddresses(addresses, callback) {
+    // ── Cache helpers ────────────────────────────────────────────
+    function isValid(v) { return v && typeof v.lat === 'number' && typeof v.lng === 'number'; }
+
+    function loadCache() {
+      if (HARDCODED_COORDS) return { ...HARDCODED_COORDS };
+      try { return JSON.parse(localStorage.getItem(CACHE_KEY)) || {}; }
+      catch { return {}; }
+    }
+    function saveCache(cache) {
+      try { localStorage.setItem(CACHE_KEY, JSON.stringify(cache)); }
+      catch (e) { console.warn('Could not persist geocache:', e); }
+    }
+    function hideOverlay() {
+      const overlay = document.getElementById('loading-overlay');
+      if (!overlay) return;
+      overlay.classList.add('hidden');
+      setTimeout(() => { if (overlay.parentNode) overlay.remove(); }, 600);
+    }
+    function showError(msg) {
+      const overlay = document.getElementById('loading-overlay');
+      if (!overlay) return;
+      overlay.classList.add('error');
+      overlay.querySelector('#loading-text').textContent = msg;
+      const bar = overlay.querySelector('#progress-bar-wrap');
+      if (bar) bar.style.display = 'none';
+    }
+
+    // ── Geocode with cache: only missing addresses hit the API ──
+    function resolveLocations(addresses, callback) {
+      const cache = loadCache();
+      const missing = addresses.filter(a => !isValid(cache[a]));
+
+      const emit = () => {
+        const pts = addresses.filter(a => isValid(cache[a]))
+                             .map(a => [cache[a].lng, cache[a].lat]); // deck.gl = [lng, lat]
+        console.log(`Coverage points ready: ${pts.length} / ${addresses.length}`);
+        if (pts.length === 0) {
+          showError('No coverage points could be geocoded. Check that the Geocoding API is enabled for this key and that the key\u2019s referrer restriction allows this domain, then reload.');
+          return;
+        }
+        hideOverlay();
+        callback(pts);
+      };
+
+      // Everything already cached → instant, 0 API calls
+      if (missing.length === 0) { emit(); return; }
+
       const geocoder = new google.maps.Geocoder();
-      const locations = [];
-      let completed = 0;
-      const total = addresses.length;
+      let completed = 0, denied = 0;
+      const total = missing.length;
+      let quotaRetries = 0;
+      document.getElementById('loading-text').textContent = `Geocoding ${total} new locations…`;
 
-      addresses.forEach((addr, idx) => {
-        setTimeout(() => {
-          geocoder.geocode({ address: addr }, (results, status) => {
-            if (status === 'OK' && results && results[0]) {
-              locations.push(results[0].geometry.location);
-            } else {
-              console.warn('Geocode failed for ' + addr + ': ' + status);
-            }
-            completed++;
-            // Update progress bar
-            const pct = Math.round((completed / total) * 100);
-            document.getElementById('progress-bar').style.width = pct + '%';
-            document.getElementById('loading-text').textContent =
-              `Loading coverage… ${completed} / ${total}`;
+      const processNext = (i) => {
+        if (i >= total) {
+          saveCache(cache);
+          if (denied === total) {
+            showError('Geocoding was denied for every request (status REQUEST_DENIED). Enable the Geocoding API and check key restrictions, then reload.');
+            return;
+          }
+          emit();
+          return;
+        }
+        const addr = missing[i];
+        geocoder.geocode({ address: addr }, (results, status) => {
+          if (status === 'OK' && results && results[0]) {
+            const loc = results[0].geometry.location;
+            cache[addr] = { lat: loc.lat(), lng: loc.lng() };
+          } else if (status === 'OVER_QUERY_LIMIT' && quotaRetries < 5) {
+            quotaRetries++;
+            setTimeout(() => processNext(i), 1500); // back off, retry SAME address
+            return;
+          } else {
+            if (status === 'REQUEST_DENIED') denied++;
+            console.warn('Geocode failed for ' + addr + ': ' + status);
+            cache[addr] = null; // remember the miss so we don't loop on it
+          }
+          completed++;
+          const pct = Math.round((completed / total) * 100);
+          document.getElementById('progress-bar').style.width = pct + '%';
+          document.getElementById('loading-text').textContent = `Geocoding… ${completed} / ${total}`;
+          if (completed % 25 === 0) saveCache(cache); // checkpoint against mid-load refresh
+          setTimeout(() => processNext(i + 1), 60);
+        });
+      };
+      processNext(0);
+    }
 
-            if (completed === total) {
-              setTimeout(() => {
-                const overlay = document.getElementById('loading-overlay');
-                overlay.classList.add('hidden');
-                setTimeout(() => overlay.remove(), 600);
-              }, 400);
-              callback(locations);
-            }
-          });
-        }, idx * 100);
+    // radiusPixels grows with zoom so coverage keeps roughly the same footprint
+    function radiusForZoom(zoom) {
+      const r = 18 * Math.pow(1.55, zoom - 4);
+      return Math.min(Math.max(Math.round(r), 18), 110);
+    }
+
+    function buildHeatLayer() {
+      return new deck.HeatmapLayer({
+        id: 'coverage-heat',
+        data: heatData,
+        getPosition: d => d,
+        getWeight: 1,
+        aggregation: 'SUM',
+        radiusPixels: radiusForZoom(map.getZoom()),
+        intensity: 1,
+        threshold: 0.03,
+        colorRange,
+        opacity: 0.85
       });
+    }
+
+    function refreshDeck() {
+      if (!deckOverlay) return;
+      deckOverlay.setProps({ layers: heatVisible ? [buildHeatLayer()] : [] });
     }
 
     function initMap() {
@@ -507,10 +440,13 @@
         ]
       });
 
+      // deck.gl overlay on top of Google Maps
+      deckOverlay = new deck.GoogleMapsOverlay({ layers: [] });
+      deckOverlay.setMap(map);
+
       // Search box
       const searchBox = new google.maps.places.SearchBox(document.getElementById('search-box'));
       map.addListener('bounds_changed', () => searchBox.setBounds(map.getBounds()));
-
       let searchMarkers = [];
       searchBox.addListener('places_changed', () => {
         const places = searchBox.getPlaces();
@@ -521,16 +457,10 @@
         places.forEach(place => {
           if (!place.geometry || !place.geometry.location) return;
           searchMarkers.push(new google.maps.Marker({
-            map,
-            title: place.name,
-            position: place.geometry.location,
+            map, title: place.name, position: place.geometry.location,
             icon: {
-              path: google.maps.SymbolPath.CIRCLE,
-              scale: 8,
-              fillColor: '#28c928',
-              fillOpacity: 1,
-              strokeColor: '#fff',
-              strokeWeight: 2
+              path: google.maps.SymbolPath.CIRCLE, scale: 8,
+              fillColor: '#28c928', fillOpacity: 1, strokeColor: '#fff', strokeWeight: 2
             }
           }));
           if (place.geometry.viewport) bounds.union(place.geometry.viewport);
@@ -539,37 +469,20 @@
         map.fitBounds(bounds);
       });
 
-      // Custom zoom buttons
       document.getElementById('zoom-in').addEventListener('click', () => map.setZoom(map.getZoom() + 1));
       document.getElementById('zoom-out').addEventListener('click', () => map.setZoom(map.getZoom() - 1));
 
-      // Geocode & build heatmap
-      geocodeAddresses(rateCenterAddresses, (locations) => {
-        RateCenterHeatmap = new google.maps.visualization.HeatmapLayer({
-          data: locations,
-          map: map,
-          gradient: gradient,
-          radius: getRadiusForZoom(map.getZoom()),
-          opacity: 0.85,
-          maxIntensity: 3,
-          dissipating: true
-        });
-      });
+      // Keep heatmap footprint stable across zoom
+      map.addListener('zoom_changed', refreshDeck);
 
-      map.addListener('zoom_changed', () => {
-        if (RateCenterHeatmap) RateCenterHeatmap.set('radius', getRadiusForZoom(map.getZoom()));
-      });
-
-      // Toggle coverage button
+      // Toggle coverage
       document.getElementById('toggle-partner').addEventListener('click', () => {
-        if (RateCenterHeatmap) {
-          const isVisible = !!RateCenterHeatmap.getMap();
-          RateCenterHeatmap.setMap(isVisible ? null : map);
-          document.querySelector('#toggle-partner .dot').style.background = isVisible ? '#aaa' : '#28c928';
-        }
+        heatVisible = !heatVisible;
+        refreshDeck();
+        document.querySelector('#toggle-partner .dot').style.background = heatVisible ? '#28c928' : '#aaa';
       });
 
-      // Tab switching
+      // Tabs
       document.getElementById('btn-coverage').addEventListener('click', function() {
         this.classList.add('active');
         document.getElementById('btn-subscription').classList.remove('active');
@@ -578,16 +491,23 @@
         this.classList.add('active');
         document.getElementById('btn-coverage').classList.remove('active');
       });
+
+      // Resolve coords (cached) → build heatmap
+      resolveLocations(rateCenterAddresses, (pts) => {
+        heatData = pts;
+        refreshDeck();
+      });
     }
 
-    function getRadiusForZoom(zoom) {
-      // Scale exponentially so coverage maintains geographic width when zooming
-      const radius = 15 * Math.pow(2, zoom - 4);
-      return Math.min(Math.max(Math.round(radius), 10), 500);
-    } 
-     //key: AIzaSyCPilDrU4uiB2aRpwDPAAqtVj9KXB3xpqc
-
+    // Guard: if deck.gl failed to load from the CDN, say so instead of a blank map
+    window.addEventListener('load', () => {
+      if (typeof deck === 'undefined') {
+        console.error('deck.gl did not load from the CDN.');
+      }
+    });
   </script>
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCPilDrU4uiB2aRpwDPAAqtVj9KXB3xpqc&callback=initMap&libraries=places,visualization&v=weekly" async defer></script>
+
+  <!-- places only; visualization library is gone as of Maps v3.65 -->
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCPilDrU4uiB2aRpwDPAAqtVj9KXB3xpqc&callback=initMap&libraries=places&v=weekly" async defer></script>
 </body>
 </html>
