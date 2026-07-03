@@ -3,180 +3,339 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="initial-scale=1, width=device-width">
-  <title>Rate Center Coverage Map</title>
+  <title>Coverage Map</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       font-family: 'DM Sans', sans-serif;
-      background: #111;
-      height: 100vh;
+      background: #f4f4f4;
+      color: #111;
+    }
+
+    .page {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 28px 20px 60px;
+    }
+
+    h1 {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 22px;
+    }
+
+    /* ── MAP FRAME ─────────────────────────────────────────── */
+    #map-frame {
+      position: relative;
+      border: 2px solid #0056a3;
+      background: #fff;
+      height: 520px;
+    }
+
+    #map { position: absolute; inset: 0; }
+
+    /* ── SEARCH BAR (Bell style: white card, input + Submit) ── */
+    #search-card {
+      position: absolute;
+      top: 10px;
+      left: 90px;
+      right: 90px;
+      z-index: 10;
+      background: #fff;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.18);
+      padding: 16px 20px;
+      display: flex;
+      gap: 14px;
+      align-items: center;
+    }
+
+    #search-box {
+      flex: 1;
+      height: 42px;
+      border: 1px solid #b9b9b9;
+      border-radius: 4px;
+      padding: 0 14px;
+      font-family: inherit;
+      font-size: 14.5px;
+      color: #222;
+      outline: none;
+      background: #fafafa;
+    }
+    #search-box:focus { border-color: #0056a3; background: #fff; }
+    #search-box::placeholder { color: #767676; }
+
+    #search-submit {
+      height: 40px;
+      padding: 0 26px;
+      border: none;
+      border-radius: 20px;
+      background: #00549a;
+      color: #fff;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.15s;
+      white-space: nowrap;
+    }
+    #search-submit:hover { background: #003d70; }
+
+    /* ── ZOOM (top-left like Bell) ─────────────────────────── */
+    #zoom-controls {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      background: #fff;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.3);
+      border-radius: 2px;
       overflow: hidden;
     }
-
-    #map { height: 100vh; width: 100%; position: absolute; inset: 0; }
-
-    #search-wrapper {
-      position: absolute; top: 18px; left: 50%; transform: translateX(-50%);
-      z-index: 10; width: 320px;
-    }
-    #search-wrapper .search-inner {
-      display: flex; align-items: center; gap: 10px; background: #fff;
-      border-radius: 10px; padding: 0 14px; height: 44px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.35);
-    }
-    #search-wrapper .search-inner svg { flex-shrink: 0; color: #888; }
-    #search-box {
-      border: none; outline: none; width: 100%; font-family: inherit;
-      font-size: 14px; color: #333; background: transparent;
-    }
-    #search-box::placeholder { color: #aaa; }
-
-    #zoom-controls {
-      position: absolute; left: 16px; top: 50%; transform: translateY(-50%);
-      z-index: 10; display: flex; flex-direction: column; background: #fff;
-      border-radius: 8px; box-shadow: 0 2px 12px rgba(0,0,0,0.3); overflow: hidden;
-    }
     #zoom-controls button {
-      width: 34px; height: 34px; border: none; background: #fff; font-size: 20px;
-      line-height: 1; cursor: pointer; color: #555; transition: background 0.15s;
+      width: 40px; height: 40px;
+      border: none; background: #fff;
+      font-size: 22px; line-height: 1;
+      cursor: pointer; color: #666;
       font-family: inherit;
     }
-    #zoom-controls button:hover { background: #f0f0f0; }
-    #zoom-controls .divider { height: 1px; background: #e8e8e8; }
+    #zoom-controls button:hover { background: #f0f0f0; color: #111; }
+    #zoom-controls .divider { height: 1px; background: #e6e6e6; }
 
-    #bottom-bar {
-      position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%);
-      z-index: 10; display: flex; align-items: center; gap: 12px;
-      flex-wrap: wrap; justify-content: center;
+    /* ── DISCLAIMER ────────────────────────────────────────── */
+    .disclaimer {
+      font-size: 12px;
+      color: #555;
+      line-height: 1.6;
+      padding: 14px 4px 0;
     }
-    .tab-group {
-      display: flex; background: #fff; border-radius: 8px;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.3); overflow: hidden;
-    }
-    .tab-group button {
-      border: none; background: transparent; padding: 9px 18px; font-family: inherit;
-      font-size: 13px; font-weight: 500; color: #444; cursor: pointer;
-      white-space: nowrap; transition: background 0.15s, color 0.15s;
-    }
-    .tab-group button.active { background: #1a1a2e; color: #fff; }
-    .tab-group button:hover:not(.active) { background: #f5f5f5; }
-    .tab-group .tab-divider { width: 1px; background: #e8e8e8; align-self: stretch; }
+    .disclaimer a { color: #0066cc; }
 
-    .legend-card {
-      background: #fff; border-radius: 8px; padding: 9px 16px;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.3); display: flex;
-      align-items: center; gap: 18px;
+    /* ── COVERAGE TYPE SELECTOR (Bell style) ───────────────── */
+    .coverage-select { padding-top: 26px; }
+    .coverage-select h2 {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 18px;
     }
-    .legend-item {
-      display: flex; align-items: center; gap: 7px; font-size: 12.5px;
-      color: #333; font-weight: 500; white-space: nowrap;
-    }
-    .legend-dot { width: 11px; height: 11px; border-radius: 50%; flex-shrink: 0; }
-    .dot-5g { background: #1a7a1a; }
-    .dot-4g { background: #28c928; }
-    .dot-partner { background: #7cec7c; }
 
-    #toggle-partner {
-      position: absolute; top: 18px; right: 16px; z-index: 10; background: #fff;
-      border: none; border-radius: 8px; padding: 10px 16px; font-family: inherit;
-      font-size: 13px; font-weight: 500; color: #333; cursor: pointer;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.3); display: flex; align-items: center;
-      gap: 8px; transition: background 0.15s;
+    .type-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 18px 24px;
     }
-    #toggle-partner:hover { background: #f0f0f0; }
-    #toggle-partner .dot { width: 10px; height: 10px; border-radius: 50%; background: #28c928; }
 
+    .type-col { display: flex; flex-direction: column; gap: 12px; }
+
+    .type-head {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 15.5px;
+      font-weight: 700;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    /* custom checkbox */
+    .type-head input { display: none; }
+    .type-head .box {
+      width: 22px; height: 22px;
+      border: 2px solid #767676;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #fff;
+      transition: background 0.12s, border-color 0.12s;
+      flex-shrink: 0;
+    }
+    .type-head input:checked + .box {
+      background: #0d6efd;
+      border-color: #0d6efd;
+    }
+    .type-head .box svg { opacity: 0; transition: opacity 0.12s; }
+    .type-head input:checked + .box svg { opacity: 1; }
+
+    .swatches {
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+      padding-left: 34px;
+    }
+    .swatch {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      font-size: 13.5px;
+      color: #333;
+    }
+    .swatch .chip {
+      width: 20px; height: 14px;
+      border-radius: 3px;
+      flex-shrink: 0;
+    }
+
+    .chip-5ga  { background: #c02fa0; }
+    .chip-5g   { background: #4b4ba8; }
+    .chip-ltea { background: #aee9e4; }
+    .chip-lte  { background: #35a99a; }
+    .chip-hspa { background: #e8c94f; }
+
+    /* Loading overlay */
     #loading-overlay {
-      position: absolute; inset: 0; background: rgba(10,10,20,0.75); z-index: 20;
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      gap: 14px; color: #fff; font-size: 14px; font-weight: 500;
-      letter-spacing: 0.02em; transition: opacity 0.5s; text-align: center; padding: 0 24px;
+      position: absolute; inset: 0;
+      background: rgba(255,255,255,0.85);
+      z-index: 20;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 14px; color: #333;
+      font-size: 14px; font-weight: 500;
+      text-align: center; padding: 0 24px;
+      transition: opacity 0.5s;
     }
     #loading-overlay.hidden { opacity: 0; pointer-events: none; }
     .spinner {
-      width: 36px; height: 36px; border: 3px solid rgba(255,255,255,0.2);
-      border-top-color: #28c928; border-radius: 50%; animation: spin 0.9s linear infinite;
+      width: 34px; height: 34px;
+      border: 3px solid rgba(0,84,154,0.15);
+      border-top-color: #00549a;
+      border-radius: 50%;
+      animation: spin 0.9s linear infinite;
     }
     #loading-overlay.error .spinner { display: none; }
     @keyframes spin { to { transform: rotate(360deg); } }
     #progress-bar-wrap {
-      width: 200px; height: 4px; background: rgba(255,255,255,0.15);
+      width: 200px; height: 4px;
+      background: rgba(0,0,0,0.08);
       border-radius: 2px; overflow: hidden;
     }
     #progress-bar {
-      height: 100%; background: #28c928; width: 0%;
-      transition: width 0.2s; border-radius: 2px;
+      height: 100%; background: #00549a;
+      width: 0%; transition: width 0.2s; border-radius: 2px;
+    }
+
+    @media (max-width: 720px) {
+      #search-card { left: 60px; right: 10px; padding: 10px 12px; }
+      #map-frame { height: 420px; }
     }
   </style>
 </head>
 <body>
 
-  <div id="loading-overlay">
-    <div class="spinner"></div>
-    <span id="loading-text">Loading coverage data…</span>
-    <div id="progress-bar-wrap"><div id="progress-bar"></div></div>
-  </div>
+  <div class="page">
+    <h1>Coverage map</h1>
 
-  <div id="map"></div>
+    <div id="map-frame">
+      <div id="loading-overlay">
+        <div class="spinner"></div>
+        <span id="loading-text">Loading coverage data…</span>
+        <div id="progress-bar-wrap"><div id="progress-bar"></div></div>
+      </div>
 
-  <div id="search-wrapper">
-    <div class="search-inner">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-      </svg>
-      <input id="search-box" type="text" placeholder="Verify an address…">
+      <div id="map"></div>
+
+      <div id="search-card">
+        <input id="search-box" type="text" placeholder="Enter your address, city and/or postal code">
+        <button id="search-submit">Submit</button>
+      </div>
+
+      <div id="zoom-controls">
+        <button id="zoom-in" title="Zoom in">+</button>
+        <div class="divider"></div>
+        <button id="zoom-out" title="Zoom out">−</button>
+      </div>
+    </div>
+
+    <p class="disclaimer">
+      Coverage shown is approximate and actual coverage may vary. Speed and signal strength may vary due to
+      traffic, topography, environmental conditions and other factors.
+    </p>
+
+    <div class="coverage-select">
+      <h2>Select coverage type</h2>
+      <div class="type-grid">
+
+        <div class="type-col">
+          <label class="type-head">
+            <input type="checkbox" id="chk-5g" checked>
+            <span class="box">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            </span>
+            5G
+          </label>
+          <div class="swatches">
+            <div class="swatch"><span class="chip chip-5ga"></span>5G+ Advanced (5G+A)</div>
+            <div class="swatch"><span class="chip chip-5g"></span>5G+</div>
+          </div>
+        </div>
+
+        <div class="type-col">
+          <label class="type-head">
+            <input type="checkbox" id="chk-lte" checked>
+            <span class="box">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            </span>
+            LTE
+          </label>
+          <div class="swatches">
+            <div class="swatch"><span class="chip chip-ltea"></span>LTE Advanced (LTE-A)</div>
+            <div class="swatch"><span class="chip chip-lte"></span>LTE</div>
+          </div>
+        </div>
+
+        <div class="type-col">
+          <label class="type-head">
+            <input type="checkbox" id="chk-hspa" checked>
+            <span class="box">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            </span>
+            HSPA+
+          </label>
+          <div class="swatches">
+            <div class="swatch"><span class="chip chip-hspa"></span>HSPA+</div>
+          </div>
+        </div>
+
+      </div>
     </div>
   </div>
 
-  <div id="zoom-controls">
-    <button id="zoom-in" title="Zoom in">+</button>
-    <div class="divider"></div>
-    <button id="zoom-out" title="Zoom out">−</button>
-  </div>
-
-  <button id="toggle-partner">
-    <span class="dot"></span>
-    Toggle Coverage
-  </button>
-
-  <div id="bottom-bar">
-    <div class="tab-group">
-      <button class="active" id="btn-coverage">Coverage Details</button>
-      <div class="tab-divider"></div>
-      <button id="btn-subscription">Subscription Area</button>
-    </div>
-    <div class="legend-card">
-      <div class="legend-item"><div class="legend-dot dot-5g"></div>5G Network</div>
-      <div class="legend-item"><div class="legend-dot dot-4g"></div>4G (LTE) Network</div>
-      <div class="legend-item"><div class="legend-dot dot-partner"></div>Partner Network</div>
-    </div>
-  </div>
-
-  <!-- deck.gl: replaces the removed google.maps.visualization.HeatmapLayer -->
+  <!-- deck.gl (replaces removed google.maps HeatmapLayer) -->
   <script src="https://unpkg.com/deck.gl@9.0.4/dist.min.js"></script>
 
   <script>
-    let map;
-    let deckOverlay;
-    let heatVisible = true;
-    let heatData = [];   // array of [lng, lat]
+    let map, deckOverlay;
+    let searchMarker = null;
 
-    // ────────────────────────────────────────────────────────────
-    // OPTION A (zero API calls, best): paste precomputed coords here.
-    // After the first full geocode run, open the console and run:
-    //   copy(localStorage.getItem('rc_geocache_v1'))
-    // then paste the JSON into HARDCODED_COORDS below. Once populated,
-    // the Geocoder is never called again by anyone.
-    // To wipe a bad cache during testing, run in console:
-    //   localStorage.removeItem('rc_geocache_v1'); location.reload();
-    // ────────────────────────────────────────────────────────────
-    const HARDCODED_COORDS = null; // e.g. {"CALGARY, AB, Canada":{"lat":51.04,"lng":-114.07}, ...}
+    const HARDCODED_COORDS = null; // paste JSON from: copy(localStorage.getItem('rc_geocache_v1'))
+    const CACHE_KEY = 'rc_geocache_v1';
 
-    const CACHE_KEY = 'rc_geocache_v1'; // bump to v2 if the address list changes
+    // Major markets get 5G+ (purple) cores; a subset also gets 5G+A (magenta) specks
+    const MAJOR_5G = new Set([
+      'TORONTO, ON, Canada','MONTREAL, QC, Canada','VANCOUVER, BC, Canada','CALGARY, AB, Canada',
+      'EDMONTON, AB, Canada','OTTAWA-HULL, ON, Canada','OTTAWA-HULL, QC, Canada','WINNIPEG, MB, Canada',
+      'QUEBEC, QC, Canada','HAMILTON, ON, Canada','KITCHENER-WATERLOO, ON, Canada','LONDON, ON, Canada',
+      'HALIFAX, NS, Canada','VICTORIA, BC, Canada','SASKATOON, SK, Canada','REGINA, SK, Canada',
+      "ST. JOHN'S, NL, Canada",'KELOWNA, BC, Canada','MISSISSAUGA, ON, Canada','BRAMPTON, ON, Canada',
+      'MARKHAM, ON, Canada','LAVAL-EST, QC, Canada','LONGUEUIL, QC, Canada','GATINEAU, QC, Canada',
+      'OSHAWA, ON, Canada','WINDSOR, ON, Canada','BARRIE, ON, Canada','SHERBROOKE, QC, Canada',
+      'ST. CATHARINES-THOROLD, ON, Canada','LETHBRIDGE, AB, Canada','RED DEER, AB, Canada',
+      'KINGSTON, ON, Canada','TROIS-RIVIERES, QC, Canada','GUELPH, ON, Canada','MONCTON, NB, Canada',
+      'SUDBURY, ON, Canada','THUNDER BAY, ON, Canada','SAINT JOHN, NB, Canada','FREDERICTON, NB, Canada',
+      'CHARLOTTETOWN, PEI, Canada','NANAIMO, BC, Canada','ABBOTSFORD, BC, Canada','CHILLIWACK, BC, Canada',
+      'BURLINGTON, ON, Canada','OAKVILLE, ON, Canada','MILTON, ON, Canada','NEWMARKET, ON, Canada',
+      'RICHMOND HILL, ON, Canada','WHITBY, ON, Canada','AJAX-PICKERING, ON, Canada','BRANTFORD, ON, Canada',
+      'NIAGARA FALLS, ON, Canada','PETERBOROUGH, ON, Canada','BELLEVILLE, ON, Canada','SARNIA, ON, Canada',
+      'DRUMMONDVILLE, QC, Canada','GRANBY, QC, Canada','ST-JEROME, QC, Canada','ST-JEAN, QC, Canada',
+      'ST-HYACINTHE, QC, Canada','CHICOUTIMI, QC, Canada','RIMOUSKI, QC, Canada','GRANDE PRAIRIE, AB, Canada',
+      'MEDICINE HAT, AB, Canada','FORT MCMURRAY, AB, Canada','PRINCE GEORGE, BC, Canada','KAMLOOPS, BC, Canada',
+      'SOUTH KAMLOOPS, BC, Canada','SYDNEY, NS, Canada'
+    ]);
 
     const rateCenterAddresses = [
       'AIRDRIE, AB, Canada','ANZAC, AB, Canada','BANFF, AB, Canada','BLACKFALDS, AB, Canada',
@@ -291,19 +450,72 @@
       'DAWSON CITY, Yukon, Canada','WHITEHORSE, Yukon, Canada'
     ];
 
-    // Low → high green ramp for deck.gl HeatmapLayer (RGB or RGBA)
-    const colorRange = [
-      [0, 220, 80],
-      [0, 200, 60],
-      [0, 170, 45],
-      [0, 140, 30],
-      [0, 100, 15],
-      [0, 60, 0]
-    ];
+    // ── Colors (match Bell legend feel) ──────────────────────
+    const COLORS = {
+      ltea:  [174, 233, 228, 200], // light teal — LTE-A halo
+      lte:   [53, 169, 154, 210],  // teal — LTE
+      fiveG: [75, 75, 168, 220],   // indigo — 5G+
+      fiveGA:[192, 47, 160, 230],  // magenta — 5G+A
+      hspa:  [232, 201, 79, 210]   // yellow — HSPA+
+    };
 
-    // ── Cache helpers ────────────────────────────────────────────
+    // ── Seeded RNG so the speckle pattern is stable per address ─
+    function hashStr(s) {
+      let h = 2166136261;
+      for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); }
+      return h >>> 0;
+    }
+    function mulberry32(seed) {
+      return function() {
+        seed |= 0; seed = (seed + 0x6D2B79F5) | 0;
+        let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+        t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+      };
+    }
+
+    // Gaussian-ish jitter cluster around a center → Bell's "sponge" texture
+    function makeCluster(addr, lat, lng, count, spreadKm, rand) {
+      const pts = [];
+      const kmPerDegLat = 110.574;
+      const kmPerDegLng = 111.320 * Math.cos(lat * Math.PI / 180);
+      for (let i = 0; i < count; i++) {
+        // sum of 2 uniforms ≈ triangular → denser center, ragged edge
+        const r = spreadKm * (rand() + rand()) / 2;
+        const theta = rand() * Math.PI * 2;
+        const dLat = (r * Math.sin(theta)) / kmPerDegLat;
+        const dLng = (r * Math.cos(theta)) / kmPerDegLng;
+        pts.push([lng + dLng, lat + dLat, 800 + rand() * 2600]); // [lng, lat, blobRadius m]
+      }
+      return pts;
+    }
+
+    // Build all layer datasets from geocoded centers
+    const DATA = { ltea: [], lte: [], fiveG: [], fiveGA: [], hspa: [] };
+
+    function buildCoverageData(centers) {
+      for (const c of centers) {
+        const rand = mulberry32(hashStr(c.addr));
+        const major = MAJOR_5G.has(c.addr);
+
+        // LTE-A halo: wide, sparse, light teal
+        DATA.ltea.push(...makeCluster(c.addr, c.lat, c.lng, major ? 60 : 34, major ? 42 : 26, rand));
+        // LTE core: tighter, denser teal
+        DATA.lte.push(...makeCluster(c.addr, c.lat, c.lng, major ? 46 : 26, major ? 24 : 14, rand));
+        // HSPA+ specks on the fringe
+        DATA.hspa.push(...makeCluster(c.addr, c.lat, c.lng, 7, major ? 48 : 30, rand));
+
+        if (major) {
+          // 5G+ indigo urban core
+          DATA.fiveG.push(...makeCluster(c.addr, c.lat, c.lng, 40, 12, rand));
+          // 5G+A magenta downtown specks
+          DATA.fiveGA.push(...makeCluster(c.addr, c.lat, c.lng, 10, 4, rand));
+        }
+      }
+    }
+
+    // ── Cache helpers ────────────────────────────────────────
     function isValid(v) { return v && typeof v.lat === 'number' && typeof v.lng === 'number'; }
-
     function loadCache() {
       if (HARDCODED_COORDS) return { ...HARDCODED_COORDS };
       try { return JSON.parse(localStorage.getItem(CACHE_KEY)) || {}; }
@@ -314,51 +526,48 @@
       catch (e) { console.warn('Could not persist geocache:', e); }
     }
     function hideOverlay() {
-      const overlay = document.getElementById('loading-overlay');
-      if (!overlay) return;
-      overlay.classList.add('hidden');
-      setTimeout(() => { if (overlay.parentNode) overlay.remove(); }, 600);
+      const o = document.getElementById('loading-overlay');
+      if (!o) return;
+      o.classList.add('hidden');
+      setTimeout(() => { if (o.parentNode) o.remove(); }, 600);
     }
     function showError(msg) {
-      const overlay = document.getElementById('loading-overlay');
-      if (!overlay) return;
-      overlay.classList.add('error');
-      overlay.querySelector('#loading-text').textContent = msg;
-      const bar = overlay.querySelector('#progress-bar-wrap');
+      const o = document.getElementById('loading-overlay');
+      if (!o) return;
+      o.classList.add('error');
+      o.querySelector('#loading-text').textContent = msg;
+      const bar = o.querySelector('#progress-bar-wrap');
       if (bar) bar.style.display = 'none';
     }
 
-    // ── Geocode with cache: only missing addresses hit the API ──
     function resolveLocations(addresses, callback) {
       const cache = loadCache();
       const missing = addresses.filter(a => !isValid(cache[a]));
 
       const emit = () => {
-        const pts = addresses.filter(a => isValid(cache[a]))
-                             .map(a => [cache[a].lng, cache[a].lat]); // deck.gl = [lng, lat]
-        console.log(`Coverage points ready: ${pts.length} / ${addresses.length}`);
-        if (pts.length === 0) {
-          showError('No coverage points could be geocoded. Check that the Geocoding API is enabled for this key and that the key\u2019s referrer restriction allows this domain, then reload.');
+        const centers = addresses.filter(a => isValid(cache[a]))
+                                 .map(a => ({ addr: a, lat: cache[a].lat, lng: cache[a].lng }));
+        console.log(`Coverage centers ready: ${centers.length} / ${addresses.length}`);
+        if (centers.length === 0) {
+          showError('No coverage points could be geocoded. Check that the Geocoding API is enabled and the key\u2019s referrer restriction allows this domain, then reload.');
           return;
         }
         hideOverlay();
-        callback(pts);
+        callback(centers);
       };
 
-      // Everything already cached → instant, 0 API calls
       if (missing.length === 0) { emit(); return; }
 
       const geocoder = new google.maps.Geocoder();
-      let completed = 0, denied = 0;
+      let completed = 0, denied = 0, quotaRetries = 0;
       const total = missing.length;
-      let quotaRetries = 0;
       document.getElementById('loading-text').textContent = `Geocoding ${total} new locations…`;
 
       const processNext = (i) => {
         if (i >= total) {
           saveCache(cache);
           if (denied === total) {
-            showError('Geocoding was denied for every request (status REQUEST_DENIED). Enable the Geocoding API and check key restrictions, then reload.');
+            showError('Geocoding was denied for every request (REQUEST_DENIED). Enable the Geocoding API and check key restrictions, then reload.');
             return;
           }
           emit();
@@ -371,143 +580,140 @@
             cache[addr] = { lat: loc.lat(), lng: loc.lng() };
           } else if (status === 'OVER_QUERY_LIMIT' && quotaRetries < 5) {
             quotaRetries++;
-            setTimeout(() => processNext(i), 1500); // back off, retry SAME address
+            setTimeout(() => processNext(i), 1500);
             return;
           } else {
             if (status === 'REQUEST_DENIED') denied++;
             console.warn('Geocode failed for ' + addr + ': ' + status);
-            cache[addr] = null; // remember the miss so we don't loop on it
+            cache[addr] = null;
           }
           completed++;
-          const pct = Math.round((completed / total) * 100);
-          document.getElementById('progress-bar').style.width = pct + '%';
+          document.getElementById('progress-bar').style.width = Math.round((completed / total) * 100) + '%';
           document.getElementById('loading-text').textContent = `Geocoding… ${completed} / ${total}`;
-          if (completed % 25 === 0) saveCache(cache); // checkpoint against mid-load refresh
+          if (completed % 25 === 0) saveCache(cache);
           setTimeout(() => processNext(i + 1), 60);
         });
       };
       processNext(0);
     }
 
-    // radiusPixels grows with zoom so coverage keeps roughly the same footprint
-    function radiusForZoom(zoom) {
-      const r = 18 * Math.pow(1.55, zoom - 4);
-      return Math.min(Math.max(Math.round(r), 18), 110);
+    // ── deck.gl layers (one per coverage sub-type, Bell z-order) ─
+    function speckLayer(id, data, color, visible) {
+      return new deck.ScatterplotLayer({
+        id,
+        data,
+        visible,
+        getPosition: d => [d[0], d[1]],
+        getRadius: d => d[2],           // meters → shrinks as you zoom out, like real coverage
+        radiusUnits: 'meters',
+        radiusMinPixels: 1.2,
+        radiusMaxPixels: 26,
+        getFillColor: color,
+        stroked: false,
+        pickable: false,
+        antialiasing: false              // crisp speckle, not soft dots
+      });
     }
 
-    function buildHeatLayer() {
-      return new deck.HeatmapLayer({
-        id: 'coverage-heat',
-        data: heatData,
-        getPosition: d => d,
-        getWeight: 1,
-        aggregation: 'SUM',
-        radiusPixels: radiusForZoom(map.getZoom()),
-        intensity: 1,
-        threshold: 0.03,
-        colorRange,
-        opacity: 0.85
-      });
+    function layerState() {
+      return {
+        five: document.getElementById('chk-5g').checked,
+        lte:  document.getElementById('chk-lte').checked,
+        hspa: document.getElementById('chk-hspa').checked
+      };
     }
 
     function refreshDeck() {
       if (!deckOverlay) return;
-      deckOverlay.setProps({ layers: heatVisible ? [buildHeatLayer()] : [] });
+      const s = layerState();
+      deckOverlay.setProps({
+        layers: [
+          // paint order: halos first, hottest tech on top (like Bell)
+          speckLayer('cov-ltea',  DATA.ltea,  COLORS.ltea,  s.lte),
+          speckLayer('cov-hspa',  DATA.hspa,  COLORS.hspa,  s.hspa),
+          speckLayer('cov-lte',   DATA.lte,   COLORS.lte,   s.lte),
+          speckLayer('cov-5g',    DATA.fiveG, COLORS.fiveG, s.five),
+          speckLayer('cov-5ga',   DATA.fiveGA,COLORS.fiveGA,s.five)
+        ]
+      });
     }
 
     function initMap() {
       map = new google.maps.Map(document.getElementById('map'), {
         zoom: 4,
-        center: { lat: 56.1304, lng: -96.3468 },
+        center: { lat: 57.5, lng: -97.5 },
         mapTypeId: 'roadmap',
         disableDefaultUI: true,
+        // Light Bell-like base: default Google roadmap, slightly desaturated
         styles: [
-          { elementType: 'geometry', stylers: [{ color: '#1a1f2e' }] },
-          { elementType: 'labels.text.fill', stylers: [{ color: '#8fa3bf' }] },
-          { elementType: 'labels.text.stroke', stylers: [{ color: '#1a1f2e' }] },
-          { featureType: 'administrative', elementType: 'geometry.stroke', stylers: [{ color: '#334155' }] },
-          { featureType: 'administrative.country', elementType: 'geometry.stroke', stylers: [{ color: '#4a5568' }] },
-          { featureType: 'administrative.province', elementType: 'geometry.stroke', stylers: [{ color: '#2d3748' }] },
-          { featureType: 'landscape', elementType: 'geometry', stylers: [{ color: '#1a2035' }] },
-          { featureType: 'landscape.natural.landcover', elementType: 'geometry', stylers: [{ color: '#1e2840' }] },
           { featureType: 'poi', stylers: [{ visibility: 'off' }] },
-          { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#263150' }] },
-          { featureType: 'road', elementType: 'geometry.stroke', stylers: [{ color: '#1a2035' }] },
-          { featureType: 'road.highway', elementType: 'geometry', stylers: [{ color: '#2e3e60' }] },
           { featureType: 'transit', stylers: [{ visibility: 'off' }] },
-          { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#0d1b2a' }] },
-          { featureType: 'water', elementType: 'labels.text.fill', stylers: [{ color: '#3a5f7d' }] }
+          { featureType: 'road', elementType: 'labels', stylers: [{ visibility: 'off' }] },
+          { elementType: 'geometry', stylers: [{ saturation: -35 }, { lightness: 12 }] },
+          { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#cfe0f0' }] },
+          { featureType: 'landscape', elementType: 'geometry', stylers: [{ color: '#f2f1ee' }] }
         ]
       });
 
-      // deck.gl overlay on top of Google Maps
       deckOverlay = new deck.GoogleMapsOverlay({ layers: [] });
       deckOverlay.setMap(map);
 
-      // Search box
-      const searchBox = new google.maps.places.SearchBox(document.getElementById('search-box'));
-      map.addListener('bounds_changed', () => searchBox.setBounds(map.getBounds()));
-      let searchMarkers = [];
-      searchBox.addListener('places_changed', () => {
-        const places = searchBox.getPlaces();
-        if (!places || places.length === 0) return;
-        searchMarkers.forEach(m => m.setMap(null));
-        searchMarkers = [];
-        const bounds = new google.maps.LatLngBounds();
-        places.forEach(place => {
-          if (!place.geometry || !place.geometry.location) return;
-          searchMarkers.push(new google.maps.Marker({
-            map, title: place.name, position: place.geometry.location,
-            icon: {
-              path: google.maps.SymbolPath.CIRCLE, scale: 8,
-              fillColor: '#28c928', fillOpacity: 1, strokeColor: '#fff', strokeWeight: 2
-            }
-          }));
-          if (place.geometry.viewport) bounds.union(place.geometry.viewport);
-          else bounds.extend(place.geometry.location);
-        });
-        map.fitBounds(bounds);
+      // Bell-style search: input + Submit button (also Enter key)
+      const input = document.getElementById('search-box');
+      const autocomplete = new google.maps.places.Autocomplete(input, {
+        componentRestrictions: { country: 'ca' },
+        fields: ['geometry', 'name']
       });
+
+      function placeMarkerAndZoom(location, viewport) {
+        if (searchMarker) searchMarker.setMap(null);
+        searchMarker = new google.maps.Marker({ map, position: location });
+        if (viewport) map.fitBounds(viewport);
+        else { map.setCenter(location); map.setZoom(11); }
+      }
+
+      autocomplete.addListener('place_changed', () => {
+        const place = autocomplete.getPlace();
+        if (place && place.geometry && place.geometry.location) {
+          placeMarkerAndZoom(place.geometry.location, place.geometry.viewport);
+        }
+      });
+
+      function submitSearch() {
+        const q = input.value.trim();
+        if (!q) return;
+        // geocode the typed text (1 call per submit — negligible)
+        new google.maps.Geocoder().geocode(
+          { address: q, componentRestrictions: { country: 'CA' } },
+          (results, status) => {
+            if (status === 'OK' && results && results[0]) {
+              placeMarkerAndZoom(results[0].geometry.location, results[0].geometry.viewport);
+            }
+          }
+        );
+      }
+      document.getElementById('search-submit').addEventListener('click', submitSearch);
+      input.addEventListener('keydown', e => { if (e.key === 'Enter') submitSearch(); });
 
       document.getElementById('zoom-in').addEventListener('click', () => map.setZoom(map.getZoom() + 1));
       document.getElementById('zoom-out').addEventListener('click', () => map.setZoom(map.getZoom() - 1));
 
-      // Keep heatmap footprint stable across zoom
-      map.addListener('zoom_changed', refreshDeck);
+      // Coverage type checkboxes
+      ['chk-5g', 'chk-lte', 'chk-hspa'].forEach(id =>
+        document.getElementById(id).addEventListener('change', refreshDeck)
+      );
 
-      // Toggle coverage
-      document.getElementById('toggle-partner').addEventListener('click', () => {
-        heatVisible = !heatVisible;
-        refreshDeck();
-        document.querySelector('#toggle-partner .dot').style.background = heatVisible ? '#28c928' : '#aaa';
-      });
-
-      // Tabs
-      document.getElementById('btn-coverage').addEventListener('click', function() {
-        this.classList.add('active');
-        document.getElementById('btn-subscription').classList.remove('active');
-      });
-      document.getElementById('btn-subscription').addEventListener('click', function() {
-        this.classList.add('active');
-        document.getElementById('btn-coverage').classList.remove('active');
-      });
-
-      // Resolve coords (cached) → build heatmap
-      resolveLocations(rateCenterAddresses, (pts) => {
-        heatData = pts;
+      resolveLocations(rateCenterAddresses, (centers) => {
+        buildCoverageData(centers);
         refreshDeck();
       });
     }
 
-    // Guard: if deck.gl failed to load from the CDN, say so instead of a blank map
     window.addEventListener('load', () => {
-      if (typeof deck === 'undefined') {
-        console.error('deck.gl did not load from the CDN.');
-      }
+      if (typeof deck === 'undefined') console.error('deck.gl did not load from the CDN.');
     });
   </script>
 
-  <!-- places only; visualization library is gone as of Maps v3.65 -->
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCPilDrU4uiB2aRpwDPAAqtVj9KXB3xpqc&callback=initMap&libraries=places&v=weekly" async defer></script>
 </body>
 </html>
