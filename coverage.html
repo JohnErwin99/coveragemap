@@ -16,207 +16,101 @@
       color: #111;
     }
 
-    .page {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 28px 20px 60px;
-    }
+    .page { max-width: 1200px; margin: 0 auto; padding: 28px 20px 60px; }
+    h1 { font-size: 28px; font-weight: 700; margin-bottom: 22px; }
 
-    h1 {
-      font-size: 28px;
-      font-weight: 700;
-      margin-bottom: 22px;
-    }
-
-    /* ── MAP FRAME ─────────────────────────────────────────── */
     #map-frame {
       position: relative;
       border: 2px solid #0056a3;
       background: #fff;
       height: 520px;
     }
-
     #map { position: absolute; inset: 0; }
 
-    /* ── SEARCH BAR (Bell style: white card, input + Submit) ── */
     #search-card {
-      position: absolute;
-      top: 10px;
-      left: 90px;
-      right: 90px;
-      z-index: 10;
-      background: #fff;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.18);
-      padding: 16px 20px;
-      display: flex;
-      gap: 14px;
-      align-items: center;
+      position: absolute; top: 10px; left: 90px; right: 90px; z-index: 10;
+      background: #fff; box-shadow: 0 2px 10px rgba(0,0,0,0.18);
+      padding: 16px 20px; display: flex; gap: 14px; align-items: center;
     }
-
     #search-box {
-      flex: 1;
-      height: 42px;
-      border: 1px solid #b9b9b9;
-      border-radius: 4px;
-      padding: 0 14px;
-      font-family: inherit;
-      font-size: 14.5px;
-      color: #222;
-      outline: none;
-      background: #fafafa;
+      flex: 1; height: 42px; border: 1px solid #b9b9b9; border-radius: 4px;
+      padding: 0 14px; font-family: inherit; font-size: 14.5px; color: #222;
+      outline: none; background: #fafafa;
     }
     #search-box:focus { border-color: #0056a3; background: #fff; }
     #search-box::placeholder { color: #767676; }
-
     #search-submit {
-      height: 40px;
-      padding: 0 26px;
-      border: none;
-      border-radius: 20px;
-      background: #00549a;
-      color: #fff;
-      font-family: inherit;
-      font-size: 14px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: background 0.15s;
-      white-space: nowrap;
+      height: 40px; padding: 0 26px; border: none; border-radius: 20px;
+      background: #00549a; color: #fff; font-family: inherit; font-size: 14px;
+      font-weight: 500; cursor: pointer; transition: background 0.15s; white-space: nowrap;
     }
     #search-submit:hover { background: #003d70; }
 
-    /* ── ZOOM (top-left like Bell) ─────────────────────────── */
     #zoom-controls {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      z-index: 10;
-      display: flex;
-      flex-direction: column;
-      background: #fff;
-      box-shadow: 0 1px 6px rgba(0,0,0,0.3);
-      border-radius: 2px;
-      overflow: hidden;
+      position: absolute; top: 10px; left: 10px; z-index: 10;
+      display: flex; flex-direction: column; background: #fff;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.3); border-radius: 2px; overflow: hidden;
     }
     #zoom-controls button {
-      width: 40px; height: 40px;
-      border: none; background: #fff;
-      font-size: 22px; line-height: 1;
-      cursor: pointer; color: #666;
-      font-family: inherit;
+      width: 40px; height: 40px; border: none; background: #fff;
+      font-size: 22px; line-height: 1; cursor: pointer; color: #666; font-family: inherit;
     }
     #zoom-controls button:hover { background: #f0f0f0; color: #111; }
     #zoom-controls .divider { height: 1px; background: #e6e6e6; }
 
-    /* ── DISCLAIMER ────────────────────────────────────────── */
-    .disclaimer {
-      font-size: 12px;
-      color: #555;
-      line-height: 1.6;
-      padding: 14px 4px 0;
-    }
-    .disclaimer a { color: #0066cc; }
+    .disclaimer { font-size: 12px; color: #555; line-height: 1.6; padding: 14px 4px 0; }
 
-    /* ── COVERAGE TYPE SELECTOR (Bell style) ───────────────── */
     .coverage-select { padding-top: 26px; }
-    .coverage-select h2 {
-      font-size: 22px;
-      font-weight: 700;
-      margin-bottom: 18px;
-    }
-
+    .coverage-select h2 { font-size: 22px; font-weight: 700; margin-bottom: 18px; }
     .type-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
       gap: 18px 24px;
     }
-
     .type-col { display: flex; flex-direction: column; gap: 12px; }
-
     .type-head {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 15.5px;
-      font-weight: 700;
-      cursor: pointer;
-      user-select: none;
+      display: flex; align-items: center; gap: 10px;
+      font-size: 15.5px; font-weight: 700; cursor: pointer; user-select: none;
     }
-
-    /* custom checkbox */
     .type-head input { display: none; }
     .type-head .box {
-      width: 22px; height: 22px;
-      border: 2px solid #767676;
-      border-radius: 4px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #fff;
-      transition: background 0.12s, border-color 0.12s;
-      flex-shrink: 0;
+      width: 22px; height: 22px; border: 2px solid #767676; border-radius: 4px;
+      display: flex; align-items: center; justify-content: center; background: #fff;
+      transition: background 0.12s, border-color 0.12s; flex-shrink: 0;
     }
-    .type-head input:checked + .box {
-      background: #0d6efd;
-      border-color: #0d6efd;
-    }
+    .type-head input:checked + .box { background: #0d6efd; border-color: #0d6efd; }
     .type-head .box svg { opacity: 0; transition: opacity 0.12s; }
     .type-head input:checked + .box svg { opacity: 1; }
 
-    .swatches {
-      display: flex;
-      flex-direction: column;
-      gap: 9px;
-      padding-left: 34px;
-    }
-    .swatch {
-      display: flex;
-      align-items: center;
-      gap: 9px;
-      font-size: 13.5px;
-      color: #333;
-    }
-    .swatch .chip {
-      width: 20px; height: 14px;
-      border-radius: 3px;
-      flex-shrink: 0;
-    }
+    .swatches { display: flex; flex-direction: column; gap: 9px; padding-left: 34px; }
+    .swatch { display: flex; align-items: center; gap: 9px; font-size: 13.5px; color: #333; }
+    .swatch .chip { width: 20px; height: 14px; border-radius: 3px; flex-shrink: 0; }
 
-    .chip-5ga  { background: #c02fa0; }
-    .chip-5g   { background: #4b4ba8; }
-    .chip-ltea { background: #aee9e4; }
-    .chip-lte  { background: #35a99a; }
-    .chip-hspa { background: #e8c94f; }
+    .chip-5g       { background: #4b4ba8; }
+    .chip-home     { background: #35a99a; }
+    .chip-partner  { background: #7cc96e; }
+    .chip-extended { background: #a9d5f2; }
 
-    /* Loading overlay */
     #loading-overlay {
-      position: absolute; inset: 0;
-      background: rgba(255,255,255,0.85);
-      z-index: 20;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      gap: 14px; color: #333;
-      font-size: 14px; font-weight: 500;
-      text-align: center; padding: 0 24px;
-      transition: opacity 0.5s;
+      position: absolute; inset: 0; background: rgba(255,255,255,0.85); z-index: 20;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 14px; color: #333; font-size: 14px; font-weight: 500;
+      text-align: center; padding: 0 24px; transition: opacity 0.5s;
     }
     #loading-overlay.hidden { opacity: 0; pointer-events: none; }
     .spinner {
-      width: 34px; height: 34px;
-      border: 3px solid rgba(0,84,154,0.15);
-      border-top-color: #00549a;
-      border-radius: 50%;
-      animation: spin 0.9s linear infinite;
+      width: 34px; height: 34px; border: 3px solid rgba(0,84,154,0.15);
+      border-top-color: #00549a; border-radius: 50%; animation: spin 0.9s linear infinite;
     }
     #loading-overlay.error .spinner { display: none; }
     @keyframes spin { to { transform: rotate(360deg); } }
     #progress-bar-wrap {
-      width: 200px; height: 4px;
-      background: rgba(0,0,0,0.08);
+      width: 200px; height: 4px; background: rgba(0,0,0,0.08);
       border-radius: 2px; overflow: hidden;
     }
     #progress-bar {
-      height: 100%; background: #00549a;
-      width: 0%; transition: width 0.2s; border-radius: 2px;
+      height: 100%; background: #00549a; width: 0%;
+      transition: width 0.2s; border-radius: 2px;
     }
 
     @media (max-width: 720px) {
@@ -262,42 +156,41 @@
 
         <div class="type-col">
           <label class="type-head">
-            <input type="checkbox" id="chk-5g" checked>
+            <input type="checkbox" id="chk-home" checked>
             <span class="box">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
             </span>
-            5G
+            Home Network
           </label>
           <div class="swatches">
-            <div class="swatch"><span class="chip chip-5ga"></span>5G+ Advanced (5G+A)</div>
-            <div class="swatch"><span class="chip chip-5g"></span>5G+</div>
+            <div class="swatch"><span class="chip chip-5g"></span>5G</div>
+            <div class="swatch"><span class="chip chip-home"></span>4G (LTE)</div>
           </div>
         </div>
 
         <div class="type-col">
           <label class="type-head">
-            <input type="checkbox" id="chk-lte" checked>
+            <input type="checkbox" id="chk-partner" checked>
             <span class="box">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
             </span>
-            LTE
+            Partner Network
           </label>
           <div class="swatches">
-            <div class="swatch"><span class="chip chip-ltea"></span>LTE Advanced (LTE-A)</div>
-            <div class="swatch"><span class="chip chip-lte"></span>LTE</div>
+            <div class="swatch"><span class="chip chip-partner"></span>Partner roaming</div>
           </div>
         </div>
 
         <div class="type-col">
           <label class="type-head">
-            <input type="checkbox" id="chk-hspa" checked>
+            <input type="checkbox" id="chk-extended" checked>
             <span class="box">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
             </span>
-            HSPA+
+            Extended Network
           </label>
           <div class="swatches">
-            <div class="swatch"><span class="chip chip-hspa"></span>HSPA+</div>
+            <div class="swatch"><span class="chip chip-extended"></span>Extended coverage</div>
           </div>
         </div>
 
@@ -315,15 +208,15 @@
     const HARDCODED_COORDS = null; // paste JSON from: copy(localStorage.getItem('rc_geocache_v1'))
     const CACHE_KEY = 'rc_geocache_v1';
 
-    // Major markets get 5G+ (purple) cores; a subset also gets 5G+A (magenta) specks
+    // Major markets: get 5G cores + drive the Extended Network blanket density
     const MAJOR_5G = new Set([
       'TORONTO, ON, Canada','MONTREAL, QC, Canada','VANCOUVER, BC, Canada','CALGARY, AB, Canada',
       'EDMONTON, AB, Canada','OTTAWA-HULL, ON, Canada','OTTAWA-HULL, QC, Canada','WINNIPEG, MB, Canada',
       'QUEBEC, QC, Canada','HAMILTON, ON, Canada','KITCHENER-WATERLOO, ON, Canada','LONDON, ON, Canada',
       'HALIFAX, NS, Canada','VICTORIA, BC, Canada','SASKATOON, SK, Canada','REGINA, SK, Canada',
-      "ST. JOHN'S, NL, Canada",'KELOWNA, BC, Canada','MISSISSAUGA, ON, Canada','BRAMPTON, ON, Canada',
-      'MARKHAM, ON, Canada','LAVAL-EST, QC, Canada','LONGUEUIL, QC, Canada','GATINEAU, QC, Canada',
-      'OSHAWA, ON, Canada','WINDSOR, ON, Canada','BARRIE, ON, Canada','SHERBROOKE, QC, Canada',
+      "ST. JOHN'S, NL, Canada",'KELOWNA, BC, Canada','BRAMPTON, ON, Canada','MARKHAM, ON, Canada',
+      'LAVAL-EST, QC, Canada','LONGUEUIL, QC, Canada','GATINEAU, QC, Canada','OSHAWA, ON, Canada',
+      'WINDSOR, ON, Canada','BARRIE, ON, Canada','SHERBROOKE, QC, Canada',
       'ST. CATHARINES-THOROLD, ON, Canada','LETHBRIDGE, AB, Canada','RED DEER, AB, Canada',
       'KINGSTON, ON, Canada','TROIS-RIVIERES, QC, Canada','GUELPH, ON, Canada','MONCTON, NB, Canada',
       'SUDBURY, ON, Canada','THUNDER BAY, ON, Canada','SAINT JOHN, NB, Canada','FREDERICTON, NB, Canada',
@@ -333,7 +226,7 @@
       'NIAGARA FALLS, ON, Canada','PETERBOROUGH, ON, Canada','BELLEVILLE, ON, Canada','SARNIA, ON, Canada',
       'DRUMMONDVILLE, QC, Canada','GRANBY, QC, Canada','ST-JEROME, QC, Canada','ST-JEAN, QC, Canada',
       'ST-HYACINTHE, QC, Canada','CHICOUTIMI, QC, Canada','RIMOUSKI, QC, Canada','GRANDE PRAIRIE, AB, Canada',
-      'MEDICINE HAT, AB, Canada','FORT MCMURRAY, AB, Canada','PRINCE GEORGE, BC, Canada','KAMLOOPS, BC, Canada',
+      'MEDICINE HAT, AB, Canada','FORT MCMURRAY, AB, Canada','PRINCE GEORGE, BC, Canada',
       'SOUTH KAMLOOPS, BC, Canada','SYDNEY, NS, Canada'
     ]);
 
@@ -450,16 +343,16 @@
       'DAWSON CITY, Yukon, Canada','WHITEHORSE, Yukon, Canada'
     ];
 
-    // ── Colors (match Bell legend feel) ──────────────────────
+    // ── Colors ───────────────────────────────────────────────
     const COLORS = {
-      ltea:  [174, 233, 228, 200], // light teal — LTE-A halo
-      lte:   [53, 169, 154, 210],  // teal — LTE
-      fiveG: [75, 75, 168, 220],   // indigo — 5G+
-      fiveGA:[192, 47, 160, 230],  // magenta — 5G+A
-      hspa:  [232, 201, 79, 210]   // yellow — HSPA+
+      fiveG:    [75, 75, 168, 220],   // indigo — 5G (Home)
+      home:     [53, 169, 154, 215],  // teal — LTE (Home)
+      homeHalo: [122, 205, 193, 190], // light teal halo (Home)
+      partner:  [124, 201, 110, 205], // green — Partner roaming
+      extended: [169, 213, 242, 165]  // pale blue — Extended blanket (Bell-footprint style)
     };
 
-    // ── Seeded RNG so the speckle pattern is stable per address ─
+    // ── Seeded RNG (stable speckle per address) ──────────────
     function hashStr(s) {
       let h = 2166136261;
       for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); }
@@ -474,43 +367,39 @@
       };
     }
 
-    // Gaussian-ish jitter cluster around a center → Bell's "sponge" texture
-    function makeCluster(addr, lat, lng, count, spreadKm, rand) {
+    function makeCluster(lat, lng, count, spreadKm, rand, rMin, rMax) {
       const pts = [];
       const kmPerDegLat = 110.574;
       const kmPerDegLng = 111.320 * Math.cos(lat * Math.PI / 180);
       for (let i = 0; i < count; i++) {
-        // sum of 2 uniforms ≈ triangular → denser center, ragged edge
-        const r = spreadKm * (rand() + rand()) / 2;
+        const r = spreadKm * (rand() + rand()) / 2; // triangular: dense core, ragged edge
         const theta = rand() * Math.PI * 2;
         const dLat = (r * Math.sin(theta)) / kmPerDegLat;
         const dLng = (r * Math.cos(theta)) / kmPerDegLng;
-        pts.push([lng + dLng, lat + dLat, 800 + rand() * 2600]); // [lng, lat, blobRadius m]
+        pts.push([lng + dLng, lat + dLat, rMin + rand() * (rMax - rMin)]);
       }
       return pts;
     }
 
-    // Build all layer datasets from geocoded centers
-    const DATA = { ltea: [], lte: [], fiveG: [], fiveGA: [], hspa: [] };
+    const DATA = { fiveG: [], home: [], homeHalo: [], partner: [], extended: [] };
 
     function buildCoverageData(centers) {
       for (const c of centers) {
         const rand = mulberry32(hashStr(c.addr));
         const major = MAJOR_5G.has(c.addr);
 
-        // LTE-A halo: wide, sparse, light teal
-        DATA.ltea.push(...makeCluster(c.addr, c.lat, c.lng, major ? 60 : 34, major ? 42 : 26, rand));
-        // LTE core: tighter, denser teal
-        DATA.lte.push(...makeCluster(c.addr, c.lat, c.lng, major ? 46 : 26, major ? 24 : 14, rand));
-        // HSPA+ specks on the fringe
-        DATA.hspa.push(...makeCluster(c.addr, c.lat, c.lng, 7, major ? 48 : 30, rand));
+        // EXTENDED NETWORK — the Bell-footprint-style blanket:
+        // very wide, generous speckle radiating far beyond the home core,
+        // knitting corridors together across populated Canada
+        DATA.extended.push(...makeCluster(c.lat, c.lng, major ? 110 : 60, major ? 85 : 55, rand, 1500, 5200));
 
-        if (major) {
-          // 5G+ indigo urban core
-          DATA.fiveG.push(...makeCluster(c.addr, c.lat, c.lng, 40, 12, rand));
-          // 5G+A magenta downtown specks
-          DATA.fiveGA.push(...makeCluster(c.addr, c.lat, c.lng, 10, 4, rand));
-        }
+        // HOME NETWORK — halo + tight teal core (+ indigo 5G in major markets)
+        DATA.homeHalo.push(...makeCluster(c.lat, c.lng, major ? 55 : 30, major ? 38 : 22, rand, 900, 3200));
+        DATA.home.push(...makeCluster(c.lat, c.lng, major ? 45 : 26, major ? 22 : 13, rand, 800, 3000));
+        if (major) DATA.fiveG.push(...makeCluster(c.lat, c.lng, 38, 11, rand, 700, 2400));
+
+        // PARTNER NETWORK — green specks on the fringe between home and extended
+        DATA.partner.push(...makeCluster(c.lat, c.lng, 9, major ? 55 : 36, rand, 900, 3000));
       }
     }
 
@@ -597,29 +486,29 @@
       processNext(0);
     }
 
-    // ── deck.gl layers (one per coverage sub-type, Bell z-order) ─
+    // ── deck.gl layers ───────────────────────────────────────
     function speckLayer(id, data, color, visible) {
       return new deck.ScatterplotLayer({
         id,
         data,
         visible,
         getPosition: d => [d[0], d[1]],
-        getRadius: d => d[2],           // meters → shrinks as you zoom out, like real coverage
+        getRadius: d => d[2],
         radiusUnits: 'meters',
         radiusMinPixels: 1.2,
         radiusMaxPixels: 26,
         getFillColor: color,
         stroked: false,
         pickable: false,
-        antialiasing: false              // crisp speckle, not soft dots
+        antialiasing: false
       });
     }
 
     function layerState() {
       return {
-        five: document.getElementById('chk-5g').checked,
-        lte:  document.getElementById('chk-lte').checked,
-        hspa: document.getElementById('chk-hspa').checked
+        home:     document.getElementById('chk-home').checked,
+        partner:  document.getElementById('chk-partner').checked,
+        extended: document.getElementById('chk-extended').checked
       };
     }
 
@@ -628,12 +517,12 @@
       const s = layerState();
       deckOverlay.setProps({
         layers: [
-          // paint order: halos first, hottest tech on top (like Bell)
-          speckLayer('cov-ltea',  DATA.ltea,  COLORS.ltea,  s.lte),
-          speckLayer('cov-hspa',  DATA.hspa,  COLORS.hspa,  s.hspa),
-          speckLayer('cov-lte',   DATA.lte,   COLORS.lte,   s.lte),
-          speckLayer('cov-5g',    DATA.fiveG, COLORS.fiveG, s.five),
-          speckLayer('cov-5ga',   DATA.fiveGA,COLORS.fiveGA,s.five)
+          // paint order: extended blanket at the bottom, home network on top
+          speckLayer('cov-extended', DATA.extended, COLORS.extended, s.extended),
+          speckLayer('cov-partner',  DATA.partner,  COLORS.partner,  s.partner),
+          speckLayer('cov-homehalo', DATA.homeHalo, COLORS.homeHalo, s.home),
+          speckLayer('cov-home',     DATA.home,     COLORS.home,     s.home),
+          speckLayer('cov-5g',       DATA.fiveG,    COLORS.fiveG,    s.home)
         ]
       });
     }
@@ -644,7 +533,6 @@
         center: { lat: 57.5, lng: -97.5 },
         mapTypeId: 'roadmap',
         disableDefaultUI: true,
-        // Light Bell-like base: default Google roadmap, slightly desaturated
         styles: [
           { featureType: 'poi', stylers: [{ visibility: 'off' }] },
           { featureType: 'transit', stylers: [{ visibility: 'off' }] },
@@ -658,7 +546,6 @@
       deckOverlay = new deck.GoogleMapsOverlay({ layers: [] });
       deckOverlay.setMap(map);
 
-      // Bell-style search: input + Submit button (also Enter key)
       const input = document.getElementById('search-box');
       const autocomplete = new google.maps.places.Autocomplete(input, {
         componentRestrictions: { country: 'ca' },
@@ -682,7 +569,6 @@
       function submitSearch() {
         const q = input.value.trim();
         if (!q) return;
-        // geocode the typed text (1 call per submit — negligible)
         new google.maps.Geocoder().geocode(
           { address: q, componentRestrictions: { country: 'CA' } },
           (results, status) => {
@@ -698,8 +584,7 @@
       document.getElementById('zoom-in').addEventListener('click', () => map.setZoom(map.getZoom() + 1));
       document.getElementById('zoom-out').addEventListener('click', () => map.setZoom(map.getZoom() - 1));
 
-      // Coverage type checkboxes
-      ['chk-5g', 'chk-lte', 'chk-hspa'].forEach(id =>
+      ['chk-home', 'chk-partner', 'chk-extended'].forEach(id =>
         document.getElementById(id).addEventListener('change', refreshDeck)
       );
 
