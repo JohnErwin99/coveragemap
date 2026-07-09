@@ -6,7 +6,7 @@
   <title>Coverage Map</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Heebo:wght@500;700;800&family=Ubuntu:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -90,6 +90,8 @@
     .chip-home     { background: #35a99a; }
     .chip-partner  { background: #7cc96e; }
     .chip-extended { background: #e03a3a; }
+    .chip-roam       { background: #0a5ca8; }
+    .chip-roam-other { background: #0b2e63; }
 
     #loading-overlay {
       position: absolute; inset: 0; background: rgba(255,255,255,0.85); z-index: 20;
@@ -117,6 +119,121 @@
       #search-card { left: 60px; right: 10px; padding: 10px 12px; }
       #map-frame { height: 420px; }
     }
+
+    /* ── PLANS PANEL (shown after a successful address search) ── */
+    #plans-panel {
+      display: none;
+      margin-top: 34px;
+      background: #071127;
+      border-radius: 14px;
+      padding: 44px 30px 50px;
+      background-image: radial-gradient(circle at 15% 20%, rgba(40,70,140,0.25), transparent 45%),
+                        radial-gradient(circle at 85% 80%, rgba(200,20,90,0.12), transparent 45%);
+    }
+    #plans-panel.visible { display: block; }
+    #plans-panel h2 {
+      font-family: 'Heebo', sans-serif;
+      font-weight: 800;
+      font-size: 34px;
+      color: #fff;
+      text-align: center;
+      margin-bottom: 8px;
+    }
+    #plans-location {
+      font-family: 'Ubuntu', sans-serif;
+      color: #9fb3d9;
+      text-align: center;
+      font-size: 15px;
+      margin-bottom: 34px;
+    }
+    .plans-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 22px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .plan-card {
+      position: relative;
+      border: 5px solid #fff;          /* white border, 5px */
+      border-radius: 25px;             /* 25px radius */
+      padding: 42px 22px 34px;
+      text-align: center;
+      color: #fff;
+      background: transparent;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .plan-card.popular {
+      background: radial-gradient(circle at 50% 45%, rgba(199,21,90,0.55), rgba(199,21,90,0.08) 70%);
+    }
+    .plan-badge {
+      position: absolute;
+      top: -16px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #c7155a;
+      color: #fff;
+      font-family: 'Heebo', sans-serif;
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 0.08em;
+      padding: 5px 16px;
+    }
+    .plan-name {
+      font-family: 'Heebo', sans-serif;
+      font-weight: 700;
+      font-size: 21px;
+      margin-bottom: 12px;
+    }
+    .plan-rule { width: 26px; height: 2px; background: rgba(255,255,255,0.5); margin: 0 auto 24px; }
+    .plan-price {
+      font-family: 'Heebo', sans-serif;
+      font-weight: 800;
+      font-size: 42px;
+      line-height: 1;
+      margin-bottom: 16px;
+    }
+    .plan-price small { font-size: 16px; font-weight: 500; }
+    .plan-price .was {
+      font-family: 'Ubuntu', sans-serif;
+      font-size: 17px;
+      font-weight: 400;
+      text-decoration: line-through;
+      color: #c6d2ea;
+      margin-left: 6px;
+    }
+    .plan-data {
+      font-family: 'Heebo', sans-serif;
+      font-weight: 700;
+      font-size: 19px;
+      margin-bottom: 10px;
+    }
+    .plan-coverage, .plan-features {
+      font-family: 'Ubuntu', sans-serif;
+      font-size: 13.5px;
+      color: #d6def0;
+      line-height: 1.7;
+      margin-bottom: 8px;
+    }
+    .plan-cta {
+      margin-top: auto;
+      padding-top: 22px;
+    }
+    .plan-cta a {
+      display: inline-block;
+      background: #c7155a;
+      color: #fff;
+      font-family: 'Ubuntu', sans-serif;
+      font-weight: 700;
+      font-size: 15px;
+      text-decoration: none;
+      padding: 12px 30px;
+      border-radius: 26px;
+      transition: background 0.15s;
+    }
+    .plan-cta a:hover { background: #a51049; }
   </style>
 </head>
 <body>
@@ -192,7 +309,28 @@
           </div>
         </div>
 
+        <div class="type-col">
+          <label class="type-head">
+            <input type="checkbox" id="chk-intl" checked>
+            <span class="box">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            </span>
+            International Roaming
+          </label>
+          <div class="swatches">
+            <div class="swatch"><span class="chip chip-roam"></span>Roam Better destinations</div>
+            <div class="swatch"><span class="chip chip-roam-other"></span>Other Roaming destinations</div>
+          </div>
+        </div>
+
       </div>
+    </div>
+
+    <!-- Plans available at the searched location -->
+    <div id="plans-panel">
+      <h2>Wireless Pricing</h2>
+      <p id="plans-location">Plans available at your location</p>
+      <div class="plans-grid" id="plans-grid"></div>
     </div>
   </div>
 
@@ -381,6 +519,52 @@
 
     const DATA = { fiveG: [], home: [], homeHalo: [], partner: [], extended: [] };
 
+    // ── INTERNATIONAL ROAMING (Bell-style country choropleth) ──
+    // World countries GeoJSON (~250 features, one fetch, cached by the
+    // browser). Countries are painted by tier, like Bell's world map.
+    const WORLD_GEOJSON_URL = 'https://raw.githubusercontent.com/johan/world.geo.json/master/countries.geo.json';
+    let worldGeo = null;
+
+    // Home market — painted in the Home Network teal (semi-transparent so
+    // the detailed home speckle stays visible on top). Derived from where
+    // the home-network rate centers live.
+    const HOME_COUNTRIES = new Set(['Canada']);
+    const HOME_FILL = [53, 169, 154, 130]; // = COLORS.home, softer alpha
+    // No roaming at all (grey on Bell's map)
+    const NO_ROAMING = new Set(['North Korea', 'Iran']);
+    // "Other Roaming destinations" (dark navy) — pay-per-use tier.
+    // Everything else in the world file = "Roam Better" (bright blue).
+    // Edit these lists to match Iristel's actual roaming agreements.
+    const OTHER_ROAMING = new Set([
+      'Libya', 'Somalia', 'Angola', 'Namibia', 'Jordan', 'Tunisia',
+      'Eritrea', 'Djibouti', 'Cuba', 'Turkmenistan', 'Western Sahara',
+      'South Sudan', 'Syria', 'Yemen'
+    ]);
+
+    const ROAM_COLORS = {
+      better: [10, 92, 168, 235],   // bright blue
+      other:  [11, 46, 99, 235]     // dark navy
+    };
+
+    async function loadWorldGeo() {
+      try {
+        const res = await fetch(WORLD_GEOJSON_URL, { cache: 'force-cache' });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        worldGeo = await res.json();
+        console.log(`International roaming: ${worldGeo.features.length} countries loaded`);
+        refreshDeck();
+      } catch (e) {
+        console.warn('World GeoJSON unavailable (' + e.message + ') — roaming layer disabled.');
+      }
+    }
+
+    function roamingFill(feature) {
+      const name = feature.properties.name;
+      if (HOME_COUNTRIES.has(name)) return HOME_FILL;        // Home Network teal
+      if (NO_ROAMING.has(name)) return [0, 0, 0, 0];         // transparent
+      return OTHER_ROAMING.has(name) ? ROAM_COLORS.other : ROAM_COLORS.better;
+    }
+
     function buildCoverageData(centers) {
       for (const c of centers) {
         const rand = mulberry32(hashStr(c.addr));
@@ -506,23 +690,89 @@
       return {
         home:     document.getElementById('chk-home').checked,
         partner:  document.getElementById('chk-partner').checked,
-        extended: document.getElementById('chk-extended').checked
+        extended: document.getElementById('chk-extended').checked,
+        intl:     document.getElementById('chk-intl').checked
       };
     }
 
     function refreshDeck() {
       if (!deckOverlay) return;
       const s = layerState();
-      deckOverlay.setProps({
-        layers: [
-          // paint order: extended blanket at the bottom, home network on top
-          speckLayer('cov-extended', DATA.extended, COLORS.extended, s.extended),
-          speckLayer('cov-partner',  DATA.partner,  COLORS.partner,  s.partner),
-          speckLayer('cov-homehalo', DATA.homeHalo, COLORS.homeHalo, s.home),
-          speckLayer('cov-home',     DATA.home,     COLORS.home,     s.home),
-          speckLayer('cov-5g',       DATA.fiveG,    COLORS.fiveG,    s.home)
-        ]
-      });
+      const layers = [];
+
+      // International roaming choropleth at the very bottom.
+      // Home countries follow the Home Network checkbox; roaming tiers
+      // follow the International Roaming checkbox.
+      if (worldGeo && (s.intl || s.home)) {
+        layers.push(new deck.GeoJsonLayer({
+          id: 'intl-roaming',
+          data: worldGeo,
+          filled: true,
+          stroked: true,
+          getFillColor: f => {
+            const isHome = HOME_COUNTRIES.has(f.properties.name);
+            if (isHome) return s.home ? HOME_FILL : [0, 0, 0, 0];
+            return s.intl ? roamingFill(f) : [0, 0, 0, 0];
+          },
+          getLineColor: [255, 255, 255, 120],
+          getLineWidth: 1,
+          lineWidthUnits: 'pixels',
+          pickable: false,
+          updateTriggers: { getFillColor: [s.home, s.intl] }
+        }));
+      }
+
+      layers.push(
+        speckLayer('cov-extended', DATA.extended, COLORS.extended, s.extended),
+        speckLayer('cov-partner',  DATA.partner,  COLORS.partner,  s.partner),
+        speckLayer('cov-homehalo', DATA.homeHalo, COLORS.homeHalo, s.home),
+        speckLayer('cov-home',     DATA.home,     COLORS.home,     s.home),
+        speckLayer('cov-5g',       DATA.fiveG,    COLORS.fiveG,    s.home)
+      );
+      deckOverlay.setProps({ layers });
+    }
+
+    // ── PLANS — same for every location in Canada / US / Mexico ─
+    const PLANS = [
+      { name: 'The Essentials', price: 9,  was: null, data: '1GB',
+        coverage: 'Canada/US/Mexico',
+        features: ['Unlimited Canada-wide calls', 'Unlimited texts', '4G LTE speed'],
+        popular: false, link: '#activate-essentials' },
+      { name: 'The Traveler',   price: 19, was: 24,   data: '10GB',
+        coverage: 'Canada/US/Mexico',
+        features: ['Unlimited CAN/US/MEX calls', 'Unlimited international texts', '5G where available'],
+        popular: true,  link: '#activate-traveler' },
+      { name: 'The Unlimited',  price: 29, was: 39,   data: '25GB',
+        coverage: 'Canada/US/Mexico',
+        features: ['Unlimited CAN/US/MEX calls', 'Unlimited texts', '5G where available', 'Hotspot included'],
+        popular: false, link: '#activate-unlimited' },
+      { name: 'The Premium',    price: 49, was: null, data: '50GB',
+        coverage: 'Canada/US/Mexico',
+        features: ['Unlimited CAN/US/MEX calls', 'Unlimited international texts', '5G+ priority speed', 'Hotspot included'],
+        popular: false, link: '#activate-premium' }
+    ];
+
+    function planCardHTML(p) {
+      return `
+        <div class="plan-card${p.popular ? ' popular' : ''}">
+          ${p.popular ? '<div class="plan-badge">POPULAR</div>' : ''}
+          <div class="plan-name">${p.name}</div>
+          <div class="plan-rule"></div>
+          <div class="plan-price">$${p.price}<small>/mo</small>${p.was ? `<span class="was">$${p.was}</span>` : ''}</div>
+          <div class="plan-data">${p.data}</div>
+          <div class="plan-coverage">${p.coverage}</div>
+          <div class="plan-features">${p.features.join('<br>')}</div>
+          <div class="plan-cta"><a href="${p.link}">Activate Now</a></div>
+        </div>`;
+    }
+
+    function showPlans(locationLabel) {
+      const panel = document.getElementById('plans-panel');
+      document.getElementById('plans-grid').innerHTML = PLANS.map(planCardHTML).join('');
+      document.getElementById('plans-location').textContent =
+        'Plans available at: ' + (locationLabel || 'your location');
+      panel.classList.add('visible');
+      panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
     function initMap() {
@@ -546,35 +796,38 @@
 
       const input = document.getElementById('search-box');
       const autocomplete = new google.maps.places.Autocomplete(input, {
-        componentRestrictions: { country: 'ca' },
-        fields: ['geometry', 'name']
+        componentRestrictions: { country: ['ca', 'us', 'mx'] },
+        fields: ['geometry', 'name', 'formatted_address']
       });
 
-      function placeMarkerAndZoom(location, viewport) {
+      function placeMarkerAndZoom(location, viewport, label) {
         if (searchMarker) searchMarker.setMap(null);
         searchMarker = new google.maps.Marker({ map, position: location });
         if (viewport) map.fitBounds(viewport);
         else { map.setCenter(location); map.setZoom(11); }
+        showPlans(label);
       }
 
       autocomplete.addListener('place_changed', () => {
         const place = autocomplete.getPlace();
         if (place && place.geometry && place.geometry.location) {
-          placeMarkerAndZoom(place.geometry.location, place.geometry.viewport);
+          placeMarkerAndZoom(place.geometry.location, place.geometry.viewport,
+            place.formatted_address || place.name);
         }
       });
 
       function submitSearch() {
         const q = input.value.trim();
         if (!q) return;
-        new google.maps.Geocoder().geocode(
-          { address: q, componentRestrictions: { country: 'CA' } },
-          (results, status) => {
-            if (status === 'OK' && results && results[0]) {
-              placeMarkerAndZoom(results[0].geometry.location, results[0].geometry.viewport);
-            }
+        new google.maps.Geocoder().geocode({ address: q }, (results, status) => {
+          if (status === 'OK' && results && results[0]) {
+            const r = results[0];
+            const country = (r.address_components || []).find(c => c.types.includes('country'));
+            const code = country ? country.short_name : '';
+            if (!['CA', 'US', 'MX'].includes(code)) return; // plans only cover CA/US/MX
+            placeMarkerAndZoom(r.geometry.location, r.geometry.viewport, r.formatted_address);
           }
-        );
+        });
       }
       document.getElementById('search-submit').addEventListener('click', submitSearch);
       input.addEventListener('keydown', e => { if (e.key === 'Enter') submitSearch(); });
@@ -582,9 +835,11 @@
       document.getElementById('zoom-in').addEventListener('click', () => map.setZoom(map.getZoom() + 1));
       document.getElementById('zoom-out').addEventListener('click', () => map.setZoom(map.getZoom() - 1));
 
-      ['chk-home', 'chk-partner', 'chk-extended'].forEach(id =>
+      ['chk-home', 'chk-partner', 'chk-extended', 'chk-intl'].forEach(id =>
         document.getElementById(id).addEventListener('change', refreshDeck)
       );
+
+      loadWorldGeo();
 
       resolveLocations(rateCenterAddresses, (centers) => {
         buildCoverageData(centers);
