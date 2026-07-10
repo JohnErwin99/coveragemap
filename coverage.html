@@ -6,7 +6,7 @@
   <title>Coverage Map</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Heebo:wght@500;700;800&family=Ubuntu:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -120,125 +120,13 @@
       #map-frame { height: 420px; }
     }
 
-    /* ── PLANS PANEL (shown after a successful address search) ── */
-    #plans-panel {
-      display: none;
-      margin-top: 34px;
-      background: #071127;
-      border-radius: 14px;
-      padding: 44px 30px 50px;
-      background-image: radial-gradient(circle at 15% 20%, rgba(40,70,140,0.25), transparent 45%),
-                        radial-gradient(circle at 85% 80%, rgba(200,20,90,0.12), transparent 45%);
-    }
-    #plans-panel.visible { display: block; }
-    #plans-panel h2 {
-      font-family: 'Heebo', sans-serif;
-      font-weight: 800;
-      font-size: 34px;
-      color: #fff;
-      text-align: center;
-      margin-bottom: 8px;
-    }
-    #plans-location {
-      font-family: 'Ubuntu', sans-serif;
-      color: #9fb3d9;
-      text-align: center;
-      font-size: 15px;
-      margin-bottom: 34px;
-    }
-    .plans-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-      gap: 22px;
-      max-width: 1100px;
-      margin: 0 auto;
-    }
-    .plan-card {
-      position: relative;
-      border: 5px solid #fff;          /* white border, 5px */
-      border-radius: 25px;             /* 25px radius */
-      padding: 42px 22px 34px;
-      text-align: center;
-      color: #fff;
-      background: transparent;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    .plan-card.popular {
-      background: radial-gradient(circle at 50% 45%, rgba(199,21,90,0.55), rgba(199,21,90,0.08) 70%);
-    }
-    .plan-badge {
-      position: absolute;
-      top: -16px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #c7155a;
-      color: #fff;
-      font-family: 'Heebo', sans-serif;
-      font-weight: 700;
-      font-size: 13px;
-      letter-spacing: 0.08em;
-      padding: 5px 16px;
-    }
-    .plan-name {
-      font-family: 'Heebo', sans-serif;
-      font-weight: 700;
-      font-size: 21px;
-      margin-bottom: 12px;
-    }
-    .plan-rule { width: 26px; height: 2px; background: rgba(255,255,255,0.5); margin: 0 auto 24px; }
-    .plan-price {
-      font-family: 'Heebo', sans-serif;
-      font-weight: 800;
-      font-size: 42px;
-      line-height: 1;
-      margin-bottom: 16px;
-    }
-    .plan-price small { font-size: 16px; font-weight: 500; }
-    .plan-price .was {
-      font-family: 'Ubuntu', sans-serif;
-      font-size: 17px;
-      font-weight: 400;
-      text-decoration: line-through;
-      color: #c6d2ea;
-      margin-left: 6px;
-    }
-    .plan-data {
-      font-family: 'Heebo', sans-serif;
-      font-weight: 700;
-      font-size: 19px;
-      margin-bottom: 10px;
-    }
-    .plan-coverage, .plan-features {
-      font-family: 'Ubuntu', sans-serif;
-      font-size: 13.5px;
-      color: #d6def0;
-      line-height: 1.7;
-      margin-bottom: 8px;
-    }
-    .plan-cta {
-      margin-top: auto;
-      padding-top: 22px;
-    }
-    .plan-cta a {
-      display: inline-block;
-      background: #c7155a;
-      color: #fff;
-      font-family: 'Ubuntu', sans-serif;
-      font-weight: 700;
-      font-size: 15px;
-      text-decoration: none;
-      padding: 12px 30px;
-      border-radius: 26px;
-      transition: background 0.15s;
-    }
-    .plan-cta a:hover { background: #a51049; }
   </style>
 </head>
 <body>
 
   <div class="page">
+    <h1>Coverage map</h1>
+
     <div id="map-frame">
       <div id="loading-overlay">
         <div class="spinner"></div>
@@ -326,11 +214,7 @@
       </div>
     </div>
 
-    <!-- Plans available at the searched location -->
-    <div id="plans-panel">
-      <h2>Wireless Pricing</h2>
-      <p id="plans-location">Plans available at your location</p>
-      <div class="plans-grid" id="plans-grid"></div>
+      </div>
     </div>
   </div>
 
@@ -732,48 +616,6 @@
       deckOverlay.setProps({ layers });
     }
 
-    // ── PLANS — same for every location in Canada / US / Mexico ─
-    const PLANS = [
-      { name: 'The Essentials', price: 9,  was: null, data: '1GB',
-        coverage: 'Canada/US/Mexico',
-        features: ['Unlimited Canada-wide calls', 'Unlimited texts', '4G LTE speed'],
-        popular: false, link: '#activate-essentials' },
-      { name: 'The Traveler',   price: 19, was: 24,   data: '10GB',
-        coverage: 'Canada/US/Mexico',
-        features: ['Unlimited CAN/US/MEX calls', 'Unlimited international texts', '5G where available'],
-        popular: true,  link: '#activate-traveler' },
-      { name: 'The Unlimited',  price: 29, was: 39,   data: '25GB',
-        coverage: 'Canada/US/Mexico',
-        features: ['Unlimited CAN/US/MEX calls', 'Unlimited texts', '5G where available', 'Hotspot included'],
-        popular: false, link: '#activate-unlimited' },
-      { name: 'The Premium',    price: 49, was: null, data: '50GB',
-        coverage: 'Canada/US/Mexico',
-        features: ['Unlimited CAN/US/MEX calls', 'Unlimited international texts', '5G+ priority speed', 'Hotspot included'],
-        popular: false, link: '#activate-premium' }
-    ];
-
-    function planCardHTML(p) {
-      return `
-        <div class="plan-card${p.popular ? ' popular' : ''}">
-          ${p.popular ? '<div class="plan-badge">POPULAR</div>' : ''}
-          <div class="plan-name">${p.name}</div>
-          <div class="plan-rule"></div>
-          <div class="plan-price">$${p.price}<small>/mo</small>${p.was ? `<span class="was">$${p.was}</span>` : ''}</div>
-          <div class="plan-data">${p.data}</div>
-          <div class="plan-coverage">${p.coverage}</div>
-          <div class="plan-features">${p.features.join('<br>')}</div>
-          <div class="plan-cta"><a href="${p.link}">Activate Now</a></div>
-        </div>`;
-    }
-
-    function showPlans(locationLabel) {
-      const panel = document.getElementById('plans-panel');
-      document.getElementById('plans-grid').innerHTML = PLANS.map(planCardHTML).join('');
-      document.getElementById('plans-location').textContent =
-        'Plans available at: ' + (locationLabel || 'your location');
-      panel.classList.add('visible');
-      panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
 
     function initMap() {
       map = new google.maps.Map(document.getElementById('map'), {
@@ -805,7 +647,6 @@
         searchMarker = new google.maps.Marker({ map, position: location });
         if (viewport) map.fitBounds(viewport);
         else { map.setCenter(location); map.setZoom(11); }
-        showPlans(label);
       }
 
       autocomplete.addListener('place_changed', () => {
